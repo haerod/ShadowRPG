@@ -30,6 +30,8 @@ public class Character : MonoBehaviour
     public Slot currentSlot;
     [Tooltip("Idle, Move, Melee")]
     public string currentAction = "Idle";  //Penser à les ajouter dans MainSelector.ChangeCharaAction()
+    public Transform aimLowPoz;
+    public Transform aimHighPoz;
     [SerializeField]
     private float movementSpeed;
     private AttackWindow aw;
@@ -343,7 +345,7 @@ public class Character : MonoBehaviour
             Dealer.instance.LookAtYAxis(transform, currentSlot.transform.position);
             transform.Translate(Vector3.forward * Time.deltaTime * movementSpeed);
         }
-        else if (typeOfMovment == 2) // Aller sur le slot
+        else if (typeOfMovment == 2) // Aller au bord du slot
         {
             if (Vector3.Distance(transform.position, currentTarget.currentSlot.transform.position) <= 2f)
             {
@@ -403,7 +405,7 @@ public class Character : MonoBehaviour
     // Affiche le cercle de portée du personnage
     public void DisplayRangeCircle()
     {
-        lineRendererRange.xradius = range/2 + 3;
+        lineRendererRange.xradius = range/2 + ((range/10));
         lineRendererRange.ConstructCircle();
         lineRendererRange.GetComponent<LineRenderer>().enabled = true;
     }

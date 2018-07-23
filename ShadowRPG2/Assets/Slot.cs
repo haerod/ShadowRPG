@@ -5,8 +5,11 @@ using UnityEngine;
 public class Slot : MonoBehaviour
 {
     public Slot[] connectedSlots;
-    public Character currentChara;
     public int coverValue;
+    [HideInInspector]
+    public Character currentChara;
+
+    private int layerIgnoreAim = ~(1 >> 9);
 
 
 	void Start ()
@@ -85,33 +88,80 @@ public class Slot : MonoBehaviour
     public void ShowDistancePossibilities()
     {
         RaycastHit hit;
+        Slot targetSlot;
+        SpriteRenderer targetSr;
+        Vector3 origin = currentChara.aimLowPoz.position;
+        Vector3 end;
 
         for (int i = 0; i < Dealer.instance.allSlotArray.Length; i++)
         {
-            if(Vector3.Distance(transform.position, Dealer.instance.allSlotArray[i].transform.position) <= currentChara.range)
-            {
-                Debug.DrawRay(transform.position, (Dealer.instance.allSlotArray[i].transform.position - transform.position) * 2, Color.blue, Mathf.Infinity);
+            targetSlot = Dealer.instance.allSlotArray[i];
+            targetSr = targetSlot.GetComponentInChildren<SpriteRenderer>();
+            end = Dealer.instance.SetVectorY(targetSlot.transform.position, currentChara.aimLowPoz.position.y);
 
-                if (Physics.Raycast(transform.position, (Dealer.instance.allSlotArray[i].transform.position - transform.position), out hit))
+            if (Vector3.Distance(transform.position, targetSlot.transform.position) <= currentChara.range && targetSlot.currentChara != null && targetSlot != this) 
+                // Elimine les slots hors de portée, vides et lui-même
+            {
+
+                if (Physics.Raycast(origin, (end - origin), out hit, layerIgnoreAim)) // Raycast les slots
                 {
-                    if(hit.transform.tag == "Slot" || hit.transform.tag == "Character")
+                    Debug.DrawLine(hit.transform.position, hit.transform.position + Vector3.up, Color.cyan, Mathf.Infinity);
+                    Debug.DrawLine(origin, end, Color.blue, Mathf.Infinity);
+
+                    if (hit.transform.tag == "Obstacle") // Si c'est un obstacle
                     {
-                        currentChara.allowedSlots.Add(Dealer.instance.allSlotArray[i]);
-                        Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.attackableSlot;
+                        origin = currentChara.aimHighPoz.position;
+                        end = Dealer.instance.SetVectorY(targetSlot.transform.position, currentChara.aimHighPoz.position.y);
+
+                        if (Physics.Raycast(origin, (end - origin), out hit, layerIgnoreAim)) // Raycast le slot depuis plus haut
+                        {
+                            Debug.DrawLine(origin, end, Color.green, Mathf.Infinity);
+
+                            if (hit.transform.tag == "Character") // Si c'est un personnage
+                            {
+                                if (hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara) // Si c'est le personnage du slot
+                                {
+                                    currentChara.allowedSlots.Add(targetSlot);
+                                    targetSr.color = Dealer.instance.attackableSlot;
+                                }
+                                else
+                                {
+                                    targetSr.color = Dealer.instance.forbiddenSlot;
+                                }
+                            }
+                            else
+                            {
+                                targetSr.color = Dealer.instance.forbiddenSlot;
+                            }
+                        }
+                    }
+                    else if (hit.transform.tag == "Character") // Si c'est un personnage
+                    {
+                        print(hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara);
+                        if (hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara) // Si c'est le personnage du slot
+                        {
+                            currentChara.allowedSlots.Add(targetSlot);
+                            targetSr.color = Dealer.instance.attackableSlot;
+                        }
+                        else
+                        {
+                            targetSr.color = Dealer.instance.forbiddenSlot;
+                        }
                     }
                     else
                     {
-                        Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                        targetSr.color = Dealer.instance.forbiddenSlot;
                     }
                 }
                 else
                 {
-                    Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                    currentChara.allowedSlots.Add(targetSlot);
+                    targetSr.color = Dealer.instance.attackableSlot;
                 }
             }
             else
             {
-                Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                targetSr.color = Dealer.instance.forbiddenSlot;
             }
         }
     }

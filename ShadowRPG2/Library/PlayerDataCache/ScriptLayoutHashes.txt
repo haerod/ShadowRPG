@@ -11,7 +11,9 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
+8dc24c97430494e30839989459471e77 Assembly-CSharp.dll:.PositionTakingWindow
 76e06ba249210c5086ddfccdba52b57c Assembly-CSharp.dll:.IconPreview
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.FadeOutElement
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
 49cd62a578efc0a599b810a2b66cd49c UnityEngine.UI.dll:UnityEngine.UI.Button
@@ -103,6 +105,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 73843688b51256aed059f049c540bca8 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
+26e8323650a82016d326b055cfc2b805 Assembly-CSharp.dll:.CircleLineRenderer
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
@@ -111,8 +114,9 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 f976f293fd03543fae13d594e576eef6 Assembly-CSharp.dll:.AttackWindow
 21bcef9321ec14a2792bc903c663c5d0 Assembly-CSharp.dll:.MainSelector
-a251c1241b0e49e54f34e7e2ddb319b2 Assembly-CSharp.dll:.Character
-d31e38da59f5eae8877258087f609f57 Assembly-CSharp.dll:.Dealer
+8426bedfd0cc8d04336358392c4ede79 Assembly-CSharp.dll:.Character
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.TooltipTextLayered
+11b3a611d70d127f3db14215c52e2a52 Assembly-CSharp.dll:.Dealer
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 60b2bb652410a5867a5ab9a01cd38461 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -127,7 +131,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 3f32f08a64daf40b09ed864d96fe3840 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransform
 73843688b51256aed059f049c540bca8 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
-200eb56c7343da9e564fdc98b2692da5 Assembly-CSharp.dll:.Slot
+b19b5c74fee9ecdb23109f7bbd1c384e Assembly-CSharp.dll:.Slot
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.PlayModeRunnerCallback
 2a56361227def9f56c2cf57a88b32f4d UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.PlaymodeTestsController
 64eb32cc721b1cc68a91ed57461e188c UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender
@@ -141,4 +145,5 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 6643a49c2085852d299bdcec6cc53103 Assembly-CSharp.dll:.TooltipText
 2044ad94baba6d75ac67c0646981255f Assembly-CSharp.dll:.CombatCamera
-8dc24c97430494e30839989459471e77 Assembly-CSharp.dll:.PositionTakingWindow
+48cb8f8f5ba276e35292d773eac809e4 Assembly-CSharp.dll:.TODOLIST
+7eaacad264a0bd796404e53dc74fe307 Assembly-CSharp.dll:.MouseOverHidableObject

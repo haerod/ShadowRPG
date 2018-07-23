@@ -67,6 +67,8 @@ public class CombatCamera : MonoBehaviour
     private Vector3 newPozZoom;
     private float farDistance;
     private float pctDistance;
+    private RaycastHit hit;
+    private MouseOverHidableObject previousObj;
 
     void Awake ()
     {
@@ -79,14 +81,43 @@ public class CombatCamera : MonoBehaviour
 	
 	void Update ()
     {
+        HideForwardBuildings();
+
         if(isFreeMode)
         {
             FreeMode();
             //FreeRotation();
-            return;
         }
         else
             ZoomMode();
+    }
+
+    void HideForwardBuildings()
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out hit))
+        {
+            if (hit.transform.gameObject.layer == 8)
+            {
+                MouseOverHidableObject currentObj = hit.transform.GetComponent<MouseOverHidableObject>();
+
+                if(previousObj == currentObj || previousObj == null)
+                {
+                    currentObj.isOver = true;
+                    previousObj = currentObj;
+                }
+                else if(previousObj != currentObj)
+                {
+                    previousObj.isOver = false;
+                    previousObj = null;
+                }
+            }
+            else if(previousObj != null)
+            {
+                previousObj.isOver = false;
+            }
+
+            previousObj = hit.transform.GetComponent<MouseOverHidableObject>();
+        }
     }
 
     void FreeMode()

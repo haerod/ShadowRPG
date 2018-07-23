@@ -73,4 +73,13 @@ public class Dealer : MonoBehaviour
                                        thisTrans.position.y,
                                        targetPoz.z));
     }
+
+    public Vector3 SetVectorY (Vector3 vectorToModify, float y)
+    {
+        vectorToModify = new Vector3(
+            vectorToModify.x,
+            y,
+            vectorToModify.z);
+        return vectorToModify;
+    }
 }

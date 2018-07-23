@@ -226,14 +226,16 @@
     <Compile Include="Assets\Dealer.cs" />
     <Compile Include="Assets\FadeOutElement.cs" />
     <Compile Include="Assets\MainSelector.cs" />
+    <Compile Include="Assets\MouseOverHidableObject.cs" />
     <Compile Include="Assets\PositionTakingWindow.cs" />
     <Compile Include="Assets\Simple UI\Samples\IconPreview.cs" />
     <Compile Include="Assets\Slot.cs" />
+    <Compile Include="Assets\TODOLIST.cs" />
     <Compile Include="Assets\TooltipText.cs" />
     <Compile Include="Assets\TooltipTextLayered.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Polygon City Free Pack - Environment and Interior\Materials\Double Sided Standard Diffuse Bump.shader" />
+    <None Include="Assets\Polygon City Free Pack\Materials\Double Sided Standard Diffuse Bump.shader" />
     <None Include="Assets\Simple UI\Fonts\OFL.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

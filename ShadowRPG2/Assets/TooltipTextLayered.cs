@@ -6,35 +6,11 @@ using UnityEngine.EventSystems;
 public class TooltipTextLayered : MonoBehaviour
 {
     private RectTransform tooltip;
-    private float xTooltip;
-    private float yTooltip;
-
     private int layerToIgnore = ~(1 << 8); // Layer du décor
 
     void Start()
     {
         tooltip = Dealer.instance.tooltipText.transform.parent.gameObject.GetComponent<RectTransform>();
-        if (GetComponent<RectTransform>())
-        {
-            RectTransform rt = GetComponent<RectTransform>();
-            if (rt.position.x < Screen.width / 2)
-            {
-                xTooltip = rt.position.x + tooltip.rect.width / 2 + rt.rect.width / 2 + Dealer.instance.tooltipHorizontalOffset;
-            }
-            else
-            {
-                xTooltip = rt.position.x - tooltip.rect.width / 2 - rt.rect.width / 2 - Dealer.instance.tooltipHorizontalOffset;
-            }
-
-            if (rt.position.y > Screen.height / 2)
-            {
-                yTooltip = rt.position.y - Dealer.instance.tooltipHVerticalOffset;
-            }
-            else
-            {
-                yTooltip = rt.position.y + Dealer.instance.tooltipHVerticalOffset;
-            }
-        }
     }
 
     void Update()
@@ -43,8 +19,7 @@ public class TooltipTextLayered : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
         {
-            //Clique sur un perso (sans barre d'action)
-            if (hit.transform.GetComponent<TooltipText>())
+            if (hit.transform.GetComponent<TooltipText>() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
                 DisplayTooltip(hit.transform.GetComponent<TooltipText>().textToDisplay, Camera.main.WorldToScreenPoint(hit.transform.position));
             }
