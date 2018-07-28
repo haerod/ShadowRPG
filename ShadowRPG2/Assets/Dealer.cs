@@ -50,6 +50,7 @@ public class Dealer : MonoBehaviour
     public GameObject positionTakingWindow;
 
     [Header("Listes et Array de trucs")]
+    public Color[] teamColors;
     public Slot[] allSlotArray;
     [SerializeField] Transform characters;
     public Character[] allCharacters;
@@ -92,5 +93,20 @@ public class Dealer : MonoBehaviour
             y,
             vectorToModify.z);
         return vectorToModify;
+    }
+
+    // Mélange une List d'objects
+    public List<T> ShuffleObjectList<T>(List<T> objectListToShuffle)
+    {
+        List<T> tempList = new List<T>();
+        int x = objectListToShuffle.Count;
+
+        for (int i = 0; i < x; i++)
+        {
+            int index = Random.Range(0, objectListToShuffle.Count);
+            tempList.Add(objectListToShuffle[index]);
+            objectListToShuffle.RemoveAt(index);
+        }
+        return tempList;
     }
 }

@@ -5,38 +5,65 @@ using UnityEngine.UI;
 
 public class TurnBar : MonoBehaviour
 {
+    public int currentInitIndex;
+
     public float distBetweenImages;
 
-    GameObject prefabCharaTurn;
+    GameObject prefabTurnTile;
     RectTransform rt;
     float size;
 
+    private List<TurnTile> turnTileList = new List<TurnTile>();
+    private List<Vector2> pozTurnTile = new List<Vector2>();
+
 	void Start ()
     {
-        prefabCharaTurn = Dealer.instance.charaTurn;
+        prefabTurnTile = Dealer.instance.charaTurn;
         rt = GetComponent<RectTransform>();
-        size = prefabCharaTurn.GetComponent<RectTransform>().rect.height;
-
-        CreateBar();
+        size = prefabTurnTile.GetComponent<RectTransform>().rect.height;
 	}
 	
 	void Update ()
     {
-		
+		if(Input.GetKeyDown(KeyCode.A))
+        {
+            NextCharaTurn();
+        }
 	}
 
     // Crée la Turn Bar
-    void CreateBar()
+    public void CreateBar()
     {
         Vector2 vecPoz;
 
-        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++)
+        for (int i = 0; i < MainSelector.instance.charaInitList.Count; i++)
         {
             vecPoz = new Vector2(rt.position.x,
                 rt.position.y - (size * i) - (distBetweenImages * i));
-            TurnTile instaCharaTurn = Instantiate(prefabCharaTurn, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
-            instaCharaTurn.chara = Dealer.instance.allCharacters[i];
-            instaCharaTurn.InitTile();
+            pozTurnTile.Add(vecPoz);
+            TurnTile instaTurnTile = Instantiate(prefabTurnTile, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
+            turnTileList.Add(instaTurnTile);
+            instaTurnTile.chara = MainSelector.instance.charaInitList[i];
+            instaTurnTile.targetPoz = vecPoz;
+            instaTurnTile.index = i;
+            instaTurnTile.InitTile();
+        }
+    }
+
+    // Met le nouveau perso en haut et le précédent en bas
+    void NextCharaTurn()
+    {
+        for (int i = 0; i < turnTileList.Count; i++)
+        {
+            if (turnTileList[i].index == 0)
+            {
+                turnTileList[i].index = turnTileList.Count - 1;
+                turnTileList[i].transform.SetSiblingIndex(0);
+            }
+            else
+                turnTileList[i].index --;
+
+            turnTileList[i].targetPoz = pozTurnTile[turnTileList[i].index];
         }
     }
 }

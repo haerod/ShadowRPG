@@ -15,7 +15,9 @@ public class TODOLIST : MonoBehaviour
     [Tooltip("Les tooltips sont détectés à travers l'UI de la barre d'action")]
     public bool ToolitpATraversUI = false;
     [Tooltip("En cas d'attaque à ditance, un ennemi caché par un obstacle est quand même détecté")]
-    public bool TirDétectionEnnemi = false;
+    public bool TirDetectionEnnemi = false;
+    [Tooltip("Lorsqu'on clique sur un slot pour sélectionner un perso, ce dernier n'est pas sélecionné")]
+    public bool ClicSurSlotSelection = false;
 
     [Header("Features Générales")]
 

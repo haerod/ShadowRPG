@@ -57,7 +57,6 @@ GameObject:
   - component: {fileID: 222726103835216950}
   - component: {fileID: 114673230012616748}
   - component: {fileID: 95662323090862784}
-  - component: {fileID: 114953360102938542}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -621,17 +620,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Prise de position
---- !u!114 &114953360102938542
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1074089377073910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &222131074750990462
 CanvasRenderer:
   m_ObjectHideFlags: 1

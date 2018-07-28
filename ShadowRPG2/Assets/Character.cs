@@ -22,6 +22,7 @@ public class Character : MonoBehaviour
     private string[] stageDescription;
     public int armor;
     public float range;
+    public int init;
 
     private int successes;
 
@@ -49,6 +50,8 @@ public class Character : MonoBehaviour
     public List<Slot> allowedSlots;
     [HideInInspector]
     public Character targetedBy;
+    [HideInInspector]
+    public TurnTile turnTile;
 
     private CircleLineRenderer lineRendererRange;
 
@@ -193,7 +196,6 @@ public class Character : MonoBehaviour
     // RECHARGER L'ENERGIE
     public void ReloadEnergy()
     {
-        print(transform);
         currentStage++;
         currentEnergy = maxEnergy;
         UpdateStage();
@@ -336,7 +338,7 @@ public class Character : MonoBehaviour
     {
         if (typeOfMovment == 1) // Aller sur le slot
         {
-            if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 1f)
+            if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 1.2f)
             {
                 isMovingToSlot = 0;
                 EndMoveCharacter();
@@ -365,7 +367,7 @@ public class Character : MonoBehaviour
         }
         else if(typeOfMovment == 3) // Revenir au slot d'origine
         {
-            if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 0.9f)
+            if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 1.2f)
             {
                 isMovingToSlot = 0;
                 SetAllBoolAnimFalse();

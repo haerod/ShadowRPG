@@ -6,14 +6,15 @@ using UnityEngine.UI;
 public class MainSelector : MonoBehaviour
 {
     public bool canClick = true;
+    public List<Character> charaInitList;
 
     [HideInInspector]
     public static MainSelector instance;
-
     [HideInInspector]
     public Character selectedCharacter;
-    private List<RectTransform> energyList = new List<RectTransform>();
 
+
+    private List<RectTransform> energyList = new List<RectTransform>();
     private bool isActionStarted;
     private bool isShortcutAction;
     private int layerToIgnore = ~(1 << 8); // Layer du décor
@@ -24,6 +25,11 @@ public class MainSelector : MonoBehaviour
         if (!instance)
             instance = this;
 
+    }
+
+    void Start()
+    {
+        CreateTurnList();
     }
 
     void Update()
@@ -52,7 +58,7 @@ public class MainSelector : MonoBehaviour
                 {
                     Character perso = hit.transform.GetComponent<Character>();
                     // PJ et en vie
-                    if (perso.team == 0 && !perso.isDead)
+                    if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
                     {
                         HideActionBar();
                         selectedCharacter = perso;
@@ -67,7 +73,7 @@ public class MainSelector : MonoBehaviour
                     {
                         Character perso = hit.transform.GetComponent<Slot>().currentChara;
                         // PJ et en vie
-                        if (perso.team == 0 && !perso.isDead)
+                        if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
                         {
                             HideActionBar();
                             selectedCharacter = perso;
@@ -323,4 +329,48 @@ public class MainSelector : MonoBehaviour
             DisplayActionBar();
     }
 
+    // Crée la turn list
+    public void CreateTurnList()
+    {
+        int min = 0;
+        int max = 0;
+        List<Character> tempList = new List<Character>();
+
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule min
+        {
+            if (Dealer.instance.allCharacters[i].init < min)
+                min = Dealer.instance.allCharacters[i].init;
+        }
+
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule max
+        {
+            if (Dealer.instance.allCharacters[i].init > max)
+                max = Dealer.instance.allCharacters[i].init;
+        }
+
+        for (int i = min; i < max + 1; i++) // Organise les persos dans l'ordre
+        {
+            tempList.Clear();
+            for (int j = 0; j < Dealer.instance.allCharacters.Length; j++)
+                // Pour chaque valeur d'init possible, récupère tous les persos ayant cette init
+            {
+
+                if (Dealer.instance.allCharacters[j].init == i)
+                    tempList.Add(Dealer.instance.allCharacters[j]);
+            }
+            if (tempList.Count > 0)
+                //Prend les persos possibles et les ajoute à la liste au hasard
+            {
+                tempList = Dealer.instance.ShuffleObjectList(tempList);
+                foreach (Character chara in tempList)
+                {
+                    charaInitList.Add(chara);
+                }
+            }
+        }
+
+        charaInitList.Reverse(); // Retourne la liste
+
+        Dealer.instance.turnBar.GetComponent<TurnBar>().CreateBar();
+    }
 }
