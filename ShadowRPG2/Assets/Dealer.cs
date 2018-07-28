@@ -40,6 +40,10 @@ public class Dealer : MonoBehaviour
     public GameObject energyPref;
     public Transform energyBar;
 
+    [Header("Turn bar")]
+    public RectTransform turnBar;
+    public GameObject charaTurn;
+
     [Header("Various objects")]
     public Transform mainCanvas;
     public GameObject attackWindow;
@@ -47,6 +51,8 @@ public class Dealer : MonoBehaviour
 
     [Header("Listes et Array de trucs")]
     public Slot[] allSlotArray;
+    [SerializeField] Transform characters;
+    public Character[] allCharacters;
 
     [Header("Feedbacks divers")]
     public Transform selectedCharaFeedback;
@@ -60,13 +66,17 @@ public class Dealer : MonoBehaviour
             instance = this;
         else
             Debug.LogError("2 dealers !!!!!");
+
+        allSlotArray = (Slot[])FindObjectsOfType(typeof(Slot));
+        allCharacters = new Character[characters.childCount];
+
+        for (int i = 0; i < characters.childCount; i++)
+        {
+            allCharacters[i] = characters.GetChild(i).GetComponent<Character>();
+        }
     }
 
-    void Start()
-    {
-        allSlotArray = (Slot[]) FindObjectsOfType(typeof(Slot));
-    }
-
+    // Oriente le Transform sur l'axe Yaw (Y)
     public void LookAtYAxis(Transform thisTrans, Vector3 targetPoz)
     {
         thisTrans.LookAt(new Vector3(targetPoz.x,
@@ -74,6 +84,7 @@ public class Dealer : MonoBehaviour
                                        targetPoz.z));
     }
 
+    // Change la valeur Y d'un Vector3;
     public Vector3 SetVectorY (Vector3 vectorToModify, float y)
     {
         vectorToModify = new Vector3(

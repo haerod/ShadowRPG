@@ -1,11 +1,36 @@
 fileFormatVersion: 2
 guid: b9e75e093838e8a4d93f67bce18389a6
-timeCreated: 1530152382
+timeCreated: 1532661006
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - connectedSlotsLR: {instanceID: 0}
+  - actionBarAnim: {instanceID: 0}
+  - panelStats: {instanceID: 0}
+  - panelActions: {instanceID: 0}
+  - buttonReloadEnergy: {instanceID: 0}
+  - charaName: {instanceID: 0}
+  - stageDesription: {instanceID: 0}
+  - stageDescriptionTextual: {instanceID: 0}
+  - spriteVoidState: {instanceID: 0}
+  - spriteCurrentState: {instanceID: 0}
+  - armorValue: {instanceID: 0}
+  - coverValue: {instanceID: 0}
+  - tooltipText: {instanceID: 0}
+  - energyPref: {instanceID: 0}
+  - energyBar: {instanceID: 0}
+  - turnBar: {instanceID: 0}
+  - charaTurn: {fileID: 1884726873616320, guid: d24e5e85ce64a9f459753979d0b9717b,
+      type: 2}
+  - mainCanvas: {instanceID: 0}
+  - attackWindow: {instanceID: 0}
+  - positionTakingWindow: {instanceID: 0}
+  - selectedCharaFeedback: {instanceID: 0}
+  - feedbackAction: {instanceID: 0}
+  - imageSuccess: {instanceID: 0}
+  - imageDamages: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

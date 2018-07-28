@@ -1150,6 +1150,7 @@ MonoBehaviour:
   aimLowPoz: {fileID: 4622802167247578}
   aimHighPoz: {fileID: 4546542206326852}
   movementSpeed: 3
+  charaImage: {fileID: 21300000, guid: 23197244b0cc5584585d511c3f23d41b, type: 3}
   anim: {fileID: 0}
   isMovingToSlot: 0
   isDead: 0

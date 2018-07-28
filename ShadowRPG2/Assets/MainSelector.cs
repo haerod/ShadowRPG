@@ -220,6 +220,7 @@ public class MainSelector : MonoBehaviour
         isShortcutAction = true;
         GenerateEnergy();
         UpdateAndDisplaySelectedPlayerFeedback();
+        Camera.main.GetComponent<CombatCamera>().isActionBarOpened = true;
     }
 
     //Masque la barre d'actions
@@ -232,6 +233,7 @@ public class MainSelector : MonoBehaviour
         Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
         isShortcutAction = false;
         HideEnergy();
+        Camera.main.GetComponent<CombatCamera>().isActionBarOpened = false;
     }
 
     // Met à jour la position et fait apparaitre le feedback montrant quel PJ a été sélectionné

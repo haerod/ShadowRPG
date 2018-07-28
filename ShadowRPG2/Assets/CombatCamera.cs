@@ -37,6 +37,15 @@ public class CombatCamera : MonoBehaviour
     private float newY;
     private float newZ;
 
+    [Header("Camera sur les bords")]
+
+    [SerializeField]
+    private float xScreenBorder;
+    [SerializeField]
+    private float yScreenBorder;
+    [HideInInspector]
+    public bool isActionBarOpened;
+
     [Header("Free rotation mode")]
 
     private float sensivity = 5;
@@ -58,12 +67,12 @@ public class CombatCamera : MonoBehaviour
 
     [Space]
 
-    [SerializeField]
-    private Transform leftPoint;
-    [SerializeField]
-    private Transform rightPoint;
+    //[SerializeField]
+    //private Transform leftPoint;
+    //[SerializeField]
+    //private Transform rightPoint;
 
-    private float maxDistance;
+    //private float maxDistance;
     private Vector3 newPozZoom;
     private float farDistance;
     private float pctDistance;
@@ -76,75 +85,53 @@ public class CombatCamera : MonoBehaviour
         newX = transform.position.x;
         newY = transform.position.y;
         newZ = transform.position.z;
-        maxDistance = Vector3.Distance(leftPoint.position, rightPoint.position);
+        //maxDistance = Vector3.Distance(leftPoint.position, rightPoint.position);
 	}
 	
 	void Update ()
     {
         HideForwardBuildings();
 
-        if(isFreeMode)
-        {
-            FreeMode();
+        //if(isFreeMode)
+        //{
+        FreeMode();
             //FreeRotation();
-        }
-        else
-            ZoomMode();
+        //}
+        //else
+            //ZoomMode();
     }
 
-    void HideForwardBuildings()
-    {
-        if (Physics.Raycast(transform.position, transform.forward, out hit))
-        {
-            if (hit.transform.gameObject.layer == 8)
-            {
-                MouseOverHidableObject currentObj = hit.transform.GetComponent<MouseOverHidableObject>();
 
-                if(previousObj == currentObj || previousObj == null)
-                {
-                    currentObj.isOver = true;
-                    previousObj = currentObj;
-                }
-                else if(previousObj != currentObj)
-                {
-                    previousObj.isOver = false;
-                    previousObj = null;
-                }
-            }
-            else if(previousObj != null)
-            {
-                previousObj.isOver = false;
-            }
 
-            previousObj = hit.transform.GetComponent<MouseOverHidableObject>();
-        }
-    }
-
+    // Mouvements de base (directions et zoom)
     void FreeMode()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // Zoom
         {
             newY = Mathf.Clamp(transform.position.y + (camYModifier * -1), minY, maxY);
         }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // Dézoom
         {
             newY = Mathf.Clamp(transform.position.y + (camYModifier), minY, maxY);
         }
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        float xMouse = Input.mousePosition.x;
+        float yMouse = Input.mousePosition.y;
+
+        if (Input.GetKey(KeyCode.RightArrow) || xMouse > Screen.width - xScreenBorder) // DROITE
         {
             newX = Mathf.Clamp(transform.position.x + (camXZModifier), minX, maxX);
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.LeftArrow) || (xMouse < xScreenBorder && !isActionBarOpened)) // GAUCHE
         {
             newX = Mathf.Clamp(transform.position.x + (camXZModifier * -1), minX, maxX);
         }
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) || yMouse > Screen.height - yScreenBorder) // HAUT
         {
             newZ = Mathf.Clamp(transform.position.z + (camXZModifier), minZ, maxZ);
         }
-        else if (Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.DownArrow) || yMouse < yScreenBorder) // BAS
         {
             newZ = Mathf.Clamp(transform.position.z + (camXZModifier * -1), minZ, maxZ);
         }
@@ -156,6 +143,7 @@ public class CombatCamera : MonoBehaviour
         }
     }
 
+    // Rotation de la caméra sur elle-même
     void FreeRotation()
     {
         if (Input.GetMouseButtonDown(1))
@@ -196,11 +184,43 @@ public class CombatCamera : MonoBehaviour
 
             transform.rotation = Quaternion.Slerp(transform.rotation, rotQuat, 0.1f);
         }
-    } 
+    }
 
 
 
+    // Cache les bâtiments en face de la caméra
+    void HideForwardBuildings()
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out hit))
+        {
+            if (hit.transform.gameObject.layer == 8)
+            {
+                MouseOverHidableObject currentObj = hit.transform.GetComponent<MouseOverHidableObject>();
 
+                if (previousObj == currentObj || previousObj == null)
+                {
+                    currentObj.isOver = true;
+                    previousObj = currentObj;
+                }
+                else if (previousObj != currentObj)
+                {
+                    previousObj.isOver = false;
+                    previousObj = null;
+                }
+            }
+            else if (previousObj != null)
+            {
+                previousObj.isOver = false;
+            }
+
+            previousObj = hit.transform.GetComponent<MouseOverHidableObject>();
+        }
+    }
+
+
+    // Mode zoom (commenté)
+    /*
+    // Zoom sur plusieurs targets
     void ZoomMode()
     {
         if (targetList.Count == 1)
@@ -222,6 +242,7 @@ public class CombatCamera : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, newPozZoom, camZoomSpeed);
     }
 
+    //Calucl de la distance de zoom
     float ZoomDistance()
     {
         if(targetList.Count == 1)
@@ -246,11 +267,12 @@ public class CombatCamera : MonoBehaviour
         return Mathf.Clamp(zoomDistMax - (zoomDistMax * pctDistance), zoomDistMin, zoomDistMax);
     }
 
+    // Retour en mode de base
     public void BackToFreeMode()
     {
         isFreeMode = true;
         targetList.Clear();
     }
 
-    
+   */
 }

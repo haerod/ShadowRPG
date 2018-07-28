@@ -233,6 +233,8 @@
     <Compile Include="Assets\TODOLIST.cs" />
     <Compile Include="Assets\TooltipText.cs" />
     <Compile Include="Assets\TooltipTextLayered.cs" />
+    <Compile Include="Assets\TurnBar.cs" />
+    <Compile Include="Assets\TurnTile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Polygon City Free Pack\Materials\Double Sided Standard Diffuse Bump.shader" />

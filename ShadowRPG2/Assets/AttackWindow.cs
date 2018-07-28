@@ -66,7 +66,7 @@ public class AttackWindow : MonoBehaviour
             chara.HideRangeCircle();
         MainSelector.instance.StopAction();
         MainSelector.instance.ChangeCharaAction(0);
-        Camera.main.GetComponent<CombatCamera>().BackToFreeMode();
+        //Camera.main.GetComponent<CombatCamera>().BackToFreeMode();
         Destroy(this.gameObject);
     }
 

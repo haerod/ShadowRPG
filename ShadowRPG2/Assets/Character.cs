@@ -34,6 +34,8 @@ public class Character : MonoBehaviour
     public Transform aimHighPoz;
     [SerializeField]
     private float movementSpeed;
+    public Sprite charaImage;
+
     private AttackWindow aw;
     private Character currentTarget;
     [HideInInspector]
