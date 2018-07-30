@@ -73,7 +73,7 @@ public class ActionBar : MonoBehaviour
         GenerateEnergy(selectedCharacter);
 
         UpdateStage(selectedCharacter);
-        UpdateAndDisplaySelectedPlayerFeedback(selectedCharacter);
+        MainSelector.instance.DisplaySelectedPlayerFeedback(selectedCharacter);
         Camera.main.GetComponent<CombatCamera>().isActionBarOpened = true;
     }
 
@@ -121,13 +121,6 @@ public class ActionBar : MonoBehaviour
             buttonReloadEnergy.interactable = true;
         else
             buttonReloadEnergy.interactable = false;
-    }
-
-    // Met à jour la position et fait apparaitre le feedback montrant quel PJ a été sélectionné
-    public void UpdateAndDisplaySelectedPlayerFeedback(Character selectedCharacter)
-    {
-        Dealer.instance.selectedCharaFeedback.position = selectedCharacter.currentSlot.transform.position;
-        Dealer.instance.selectedCharaFeedback.gameObject.SetActive(true);
     }
 
 

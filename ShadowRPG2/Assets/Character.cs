@@ -49,12 +49,15 @@ public class Character : MonoBehaviour
     [HideInInspector]
     public TurnTile turnTile;
 
-    private CircleLineRenderer lineRendererRange;
+    CircleLineRenderer lineRendererRange;
+    TooltipText ttTxt;
 
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
         lineRendererRange = GetComponentInChildren<CircleLineRenderer>();
+        ttTxt = gameObject.AddComponent<TooltipText>();
+        ttTxt.textToDisplay = charaName;
     }
 
     void Start()
@@ -205,6 +208,7 @@ public class Character : MonoBehaviour
         currentAction = "Idle";
         ClearSlots();
         successes = 0;
+        MainSelector.instance.HideSelectedCharacterFeedback();
         TurnBar.instance.NextCharaTurn();
     }
 
@@ -248,7 +252,6 @@ public class Character : MonoBehaviour
         currentEnergy = 0;
         currentSlot.currentChara = null;
         SetOneBoolAnimTrue("Death");
-        TooltipText ttTxt = gameObject.AddComponent<TooltipText>();
         ttTxt.textToDisplay = "Ci-git <b>" + charaName + "</b>, tombé au champ d'honneur.";
         GetComponent<CapsuleCollider>().direction = 2;
     }

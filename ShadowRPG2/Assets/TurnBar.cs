@@ -13,8 +13,9 @@ public class TurnBar : MonoBehaviour
     RectTransform rt;
     float size;
 
-    private List<TurnTile> turnTileList = new List<TurnTile>();
-    private List<Vector2> pozTurnTile = new List<Vector2>();
+    List<TurnTile> turnTileList = new List<TurnTile>();
+    List<Vector2> pozTurnTile = new List<Vector2>();
+    List<Character> charaInitList = new List<Character>();
     [HideInInspector] public static TurnBar instance;
 
     void Awake()
@@ -35,21 +36,67 @@ public class TurnBar : MonoBehaviour
         prefabTurnTile = Dealer.instance.charaTurn;
         rt = GetComponent<RectTransform>();
         size = prefabTurnTile.GetComponent<RectTransform>().rect.height;
+
+        CreateTurnList();
 	}
+
+    // Crée la turn list
+    public void CreateTurnList()
+    {
+        int min = 0;
+        int max = 0;
+        List<Character> tempList = new List<Character>();
+
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule min
+        {
+            if (Dealer.instance.allCharacters[i].init < min)
+                min = Dealer.instance.allCharacters[i].init;
+        }
+
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule max
+        {
+            if (Dealer.instance.allCharacters[i].init > max)
+                max = Dealer.instance.allCharacters[i].init;
+        }
+
+        for (int i = min; i < max + 1; i++) // Organise les persos dans l'ordre
+        {
+            tempList.Clear();
+            for (int j = 0; j < Dealer.instance.allCharacters.Length; j++)
+            // Pour chaque valeur d'init possible, récupère tous les persos ayant cette init
+            {
+
+                if (Dealer.instance.allCharacters[j].init == i)
+                    tempList.Add(Dealer.instance.allCharacters[j]);
+            }
+            if (tempList.Count > 0)
+            //Prend les persos possibles et les ajoute à la liste au hasard
+            {
+                tempList = Dealer.instance.ShuffleObjectList(tempList);
+                foreach (Character chara in tempList)
+                {
+                    charaInitList.Add(chara);
+                }
+            }
+        }
+
+        charaInitList.Reverse(); // Retourne la liste
+        CreateBar();
+    }
 
     // Crée la Turn Bar
     public void CreateBar()
     {
         Vector2 vecPoz;
 
-        for (int i = 0; i < MainSelector.instance.charaInitList.Count; i++)
+        for (int i = 0; i < charaInitList.Count; i++)
         {
             vecPoz = new Vector2(rt.position.x,
                 rt.position.y - (size * i) - (distBetweenImages * i));
             pozTurnTile.Add(vecPoz);
             TurnTile instaTurnTile = Instantiate(prefabTurnTile, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
             turnTileList.Add(instaTurnTile);
-            instaTurnTile.chara = MainSelector.instance.charaInitList[i];
+            instaTurnTile.chara = charaInitList[i];
             instaTurnTile.targetPoz = vecPoz;
             instaTurnTile.index = i;
             instaTurnTile.gameObject.name = "TurnTile(" + instaTurnTile.chara.charaName + ")";
@@ -103,7 +150,7 @@ public class TurnBar : MonoBehaviour
     }
 
     // Donne le chara dont c'est le tour
-    public Character ReturnCurrentCharacter()
+    public Character GetCurrentCharacter()
     {
         for (int i = 0; i < turnTileList.Count; i++) // Cherche le chara ayant le bon index
         {

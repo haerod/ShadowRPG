@@ -79,26 +79,29 @@ public class CombatCamera : MonoBehaviour
     private RaycastHit hit;
     private MouseOverHidableObject previousObj;
 
+    bool isCenter;
+
     void Awake ()
     {
         newCamPoz = transform.position;
         newX = transform.position.x;
         newY = transform.position.y;
         newZ = transform.position.z;
-        //maxDistance = Vector3.Distance(leftPoint.position, rightPoint.position);
 	}
 	
 	void Update ()
     {
         HideForwardBuildings();
 
-        //if(isFreeMode)
-        //{
-        FreeMode();
-            //FreeRotation();
-        //}
-        //else
-            //ZoomMode();
+        if (Input.GetKey(KeyCode.Space))
+            isCenter = true;
+        else
+            isCenter = false;
+        
+        if (isCenter)
+            CenterOnCharacter();
+        else
+            FreeMode();
     }
 
 
@@ -215,6 +218,23 @@ public class CombatCamera : MonoBehaviour
 
             previousObj = hit.transform.GetComponent<MouseOverHidableObject>();
         }
+    }
+
+    
+    void CenterOnCharacter()
+    {
+        float zoomMax = 3;
+        float zoomMin = 12;
+        float pctY = transform.position.y / maxY;
+        
+
+        Transform chara = TurnBar.instance.GetCurrentCharacter().transform;
+        Vector3 poz = new Vector3(
+            chara.position.x,
+            (transform.position.y * zoomMin) / maxY,
+            chara.position.z - 12);
+
+        transform.position = Vector3.Lerp(transform.position, poz, 0.1f);
     }
 
 

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class MainSelector : MonoBehaviour
 {
     public bool canClick = true;
-    public List<Character> charaInitList;
 
     [HideInInspector]
     public static MainSelector instance;
@@ -22,11 +21,6 @@ public class MainSelector : MonoBehaviour
         if (!instance)
             instance = this;
 
-    }
-
-    void Start()
-    {
-        CreateTurnList();
     }
 
     void Update()
@@ -57,7 +51,7 @@ public class MainSelector : MonoBehaviour
                     {
                         ActionBar.instance.HideActionBar();
                         selectedCharacter = perso;
-                        ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.ReturnCurrentCharacter());
+                        ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.GetCurrentCharacter());
                         return;
                     }
                 }
@@ -72,7 +66,7 @@ public class MainSelector : MonoBehaviour
                         {
                             ActionBar.instance.HideActionBar();
                             selectedCharacter = perso;
-                            ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.ReturnCurrentCharacter());
+                            ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.GetCurrentCharacter());
                             return;
                         }
                     }
@@ -108,7 +102,7 @@ public class MainSelector : MonoBehaviour
                     {
                         selectedCharacter.StartMoveCharacter(tempSlot);
                         ActionBar.instance.HideActionBar();
-                        ActionBar.instance.UpdateAndDisplaySelectedPlayerFeedback(selectedCharacter);
+                        DisplaySelectedPlayerFeedback(selectedCharacter);
                         ActionBar.instance.UpdateCoverValue(selectedCharacter);
                         canClick = false;
                         return;
@@ -231,47 +225,18 @@ public class MainSelector : MonoBehaviour
             ActionBar.instance.DisplayActionBar(selectedCharacter, true);
     }
 
-    // Crée la turn list
-    public void CreateTurnList()
+
+
+    // Fait apparaitre le feedback montrant quel PJ a été sélectionné
+    public void DisplaySelectedPlayerFeedback(Character selectedCharacter)
     {
-        int min = 0;
-        int max = 0;
-        List<Character> tempList = new List<Character>();
+        Dealer.instance.selectedCharaFeedback.position = selectedCharacter.currentSlot.transform.position;
+        Dealer.instance.selectedCharaFeedback.gameObject.SetActive(true);
+    }
 
-        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule min
-        {
-            if (Dealer.instance.allCharacters[i].init < min)
-                min = Dealer.instance.allCharacters[i].init;
-        }
-
-        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule max
-        {
-            if (Dealer.instance.allCharacters[i].init > max)
-                max = Dealer.instance.allCharacters[i].init;
-        }
-
-        for (int i = min; i < max + 1; i++) // Organise les persos dans l'ordre
-        {
-            tempList.Clear();
-            for (int j = 0; j < Dealer.instance.allCharacters.Length; j++)
-                // Pour chaque valeur d'init possible, récupère tous les persos ayant cette init
-            {
-
-                if (Dealer.instance.allCharacters[j].init == i)
-                    tempList.Add(Dealer.instance.allCharacters[j]);
-            }
-            if (tempList.Count > 0)
-                //Prend les persos possibles et les ajoute à la liste au hasard
-            {
-                tempList = Dealer.instance.ShuffleObjectList(tempList);
-                foreach (Character chara in tempList)
-                {
-                    charaInitList.Add(chara);
-                }
-            }
-        }
-
-        charaInitList.Reverse(); // Retourne la liste
-        TurnBar.instance.CreateBar();
+    // Cache le feedback montrant quel PJ a été sélectionné
+    public void HideSelectedCharacterFeedback()
+    {
+        Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
     }
 }
