@@ -11,15 +11,12 @@ public class Character : MonoBehaviour
     [Tooltip("0 = Joueur, 1 = Enemy, -1 = Allié")]
     public int team;
     public int currentEnergy;
-    [SerializeField]
-    private int maxEnergy;
+    public int maxEnergy;
     [HideInInspector]
     public int stockedEnergy;
     public int currentStage;
     [SerializeField]
     private int maxStage;
-    [SerializeField]
-    private string[] stageDescription;
     public int armor;
     public float range;
     public int init;
@@ -42,7 +39,6 @@ public class Character : MonoBehaviour
     [HideInInspector]
     public Animator anim;
     [HideInInspector]
-    [Tooltip("0 = Ne bouge pas, 1 = Mouvement complet, 2 = Mouvement au bord du slot, 3 = Retour au slot d'origine")]
     public int isMovingToSlot;
     [HideInInspector]
     public bool isDead = false;
@@ -68,7 +64,7 @@ public class Character : MonoBehaviour
         else
             Debug.LogError("Le perso " + charaName + " n'a pas de slot attribué !!!");
 
-        UpdateStage();
+        //ActionBar.instance.UpdateStage(this);
     }
 
     void Update()
@@ -198,8 +194,8 @@ public class Character : MonoBehaviour
     {
         currentStage++;
         currentEnergy = maxEnergy;
-        UpdateStage();
-        MainSelector.instance.GenerateEnergy();
+        ActionBar.instance.UpdateStage(this);
+        ActionBar.instance.GenerateEnergy(this);
     }
 
     // TERMINER UNE ACTION
@@ -209,6 +205,7 @@ public class Character : MonoBehaviour
         currentAction = "Idle";
         ClearSlots();
         successes = 0;
+        TurnBar.instance.NextCharaTurn();
     }
 
 
@@ -221,7 +218,7 @@ public class Character : MonoBehaviour
         return false;
     }
 
-    // Reçoit les dommages et retourne si le personnage est mort
+    // Reçoit les dommages et retourne TRUE si le personnage est mort
     public bool ReciveDamages(int damages)
     {
         int totalDamages = damages - armor - currentSlot.coverValue;
@@ -233,32 +230,16 @@ public class Character : MonoBehaviour
         if (currentStage + totalDamages > 6)
         {
             Death();
+            TurnBar.instance.RemoveTileAt(turnTile.index);
+            turnTile.UpdateLife(true);
             return true;
             ///////
         }
         currentStage += totalDamages;
-        UpdateStage();
+        turnTile.UpdateLife(false);
+        ActionBar.instance.UpdateStage(this);
         return false;
     }
-
-    // Met à jour l'etat du personnage (UI) et bloque l'action reload
-    public void UpdateStage()
-    {
-        Dealer.instance.stageDesription.text = currentStage + "+";
-        Dealer.instance.stageDescriptionTextual.text = stageDescription[currentStage];
-        for (int i = 0; i < Dealer.instance.stageImagesArray.Length; i++)
-        {
-            if(i != (currentStage-2))
-                Dealer.instance.stageImagesArray[i].sprite = Dealer.instance.spriteVoidState;
-            else
-                Dealer.instance.stageImagesArray[i].sprite = Dealer.instance.spriteCurrentState;
-        }
-
-        if (currentStage < 6 && currentEnergy != maxEnergy)
-            Dealer.instance.buttonReloadEnergy.interactable = true;
-        else
-            Dealer.instance.buttonReloadEnergy.interactable = false;
-    } 
 
     // Le perso meurt
     public void Death()
@@ -300,15 +281,14 @@ public class Character : MonoBehaviour
         }
 
         currentEnergy -= engagedDices;
-        if(currentAction == "Melee")
+        ShowFeedbackAction(0, transform.position, successes);
+        if (currentAction == "Melee")
         {
             EndAttackMelee(successes);
-            ShowFeedbackAction(0, transform.position, successes);
         }
         else if (currentAction == "Distance")
         {
             EndAttackDistance(successes);
-            ShowFeedbackAction(0, transform.position, successes);
         }
     }
 
@@ -333,7 +313,8 @@ public class Character : MonoBehaviour
     // Emmène le perso vers le slot :
     // - Sur le slot (1)
     // - Au bord du slot (2)
-    // - Son slot d'origine (3)
+    // - Son slot d'origine : termine le tour (3)
+    // - Son slot d'origine : continue le tour (4)
     public void MoveToSlot(int typeOfMovment)
     {
         if (typeOfMovment == 1) // Aller sur le slot
@@ -351,7 +332,7 @@ public class Character : MonoBehaviour
         }
         else if (typeOfMovment == 2) // Aller au bord du slot
         {
-            if (Vector3.Distance(transform.position, currentTarget.currentSlot.transform.position) <= 2f)
+            if (Vector3.Distance(transform.position, currentTarget.currentSlot.transform.position) <= 2.5f)
             {
                 isMovingToSlot = 0;
                 SetAllBoolAnimFalse();
@@ -365,14 +346,15 @@ public class Character : MonoBehaviour
                 transform.Translate(Vector3.forward * Time.deltaTime * movementSpeed);
             }
         }
-        else if(typeOfMovment == 3) // Revenir au slot d'origine
+        else if(typeOfMovment == 3 || typeOfMovment == 4) // Revenir au slot d'origine (et termine l'action)
         {
             if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 1.2f)
             {
                 isMovingToSlot = 0;
                 SetAllBoolAnimFalse();
                 PozOnSlot();
-                EndAction();
+                if(typeOfMovment == 3)
+                    EndAction();
                 return;
                 //////////////
             }

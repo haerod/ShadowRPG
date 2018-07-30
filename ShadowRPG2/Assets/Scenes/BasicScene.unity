@@ -866,7 +866,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 189716263}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -42.149994, y: -217.20001, z: 0}
+  m_LocalPosition: {x: -42.149994, y: -172.20001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 981449765}
@@ -1916,7 +1916,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 842307782}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 297.2, y: 116.4, z: 0}
+  m_LocalPosition: {x: 377.2, y: 161.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1584037950}
@@ -3028,7 +3028,7 @@ GameObject:
   - component: {fileID: 1116423133}
   - component: {fileID: 1116423137}
   m_Layer: 5
-  m_Name: Energy
+  m_Name: EnergyBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3046,7 +3046,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1420850836}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -3151,7 +3151,7 @@ RectTransform:
   - {fileID: 1462728045}
   - {fileID: 431720380}
   m_Father: {fileID: 1420850836}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -3481,13 +3481,14 @@ GameObject:
   - component: {fileID: 1207159725}
   - component: {fileID: 1207159724}
   - component: {fileID: 1207159726}
+  - component: {fileID: 1207159727}
   m_Layer: 5
   m_Name: ActionBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1207159723
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3495,7 +3496,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1207159722}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -222.4, y: -0.2999878, z: 0}
+  m_LocalPosition: {x: -302.4, y: -0.2999878, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1420850836}
@@ -3558,6 +3559,40 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &1207159727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1207159722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c6cdadd6e83fc04f82ce1a909ed0d83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panelActions: {fileID: 189716263}
+  panelStats: {fileID: 1420850835}
+  charaNameTxt: {fileID: 117206517}
+  armorValueTxt: {fileID: 1462728046}
+  coverValueTxt: {fileID: 1196383998}
+  stageDesriptionTxt: {fileID: 2143261324}
+  stageDescriptionTextual: {fileID: 667804242}
+  energyBarRt: {fileID: 1116423132}
+  stageImagesArray:
+  - {fileID: 321350065}
+  - {fileID: 1410008306}
+  - {fileID: 1288331966}
+  - {fileID: 1106681118}
+  - {fileID: 804713978}
+  buttonReloadEnergy: {fileID: 868289610}
+  stageDescription:
+  - Rien
+  - Rien
+  - En forme
+  - "Amoch\xE9"
+  - Mal en point
+  - "Ext\xE9nu\xE9"
+  - A bout de forces
 --- !u!1 &1288331964
 GameObject:
   m_ObjectHideFlags: 0
@@ -3807,7 +3842,7 @@ RectTransform:
   - {fileID: 1196383997}
   - {fileID: 85278594}
   m_Father: {fileID: 1420850836}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -4203,15 +4238,15 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1420850835}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1499939, y: 13.800003, z: 0}
+  m_LocalPosition: {x: -0.1499939, y: 58.800003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1089180851}
   - {fileID: 1678246044}
   - {fileID: 179124127}
-  - {fileID: 1116423132}
   - {fileID: 1131707436}
   - {fileID: 1365504119}
+  - {fileID: 1116423132}
   m_Father: {fileID: 1207159723}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5430,7 +5465,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1584037946}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 372.5, y: 209.5, z: 0}
+  m_LocalPosition: {x: 452.5, y: 254.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1207159723}
@@ -5817,35 +5852,18 @@ MonoBehaviour:
   freeSlot: {r: 0.011764706, g: 0.5647059, b: 0.24705882, a: 1}
   forbiddenSlot: {r: 0.4392157, g: 0.4392157, b: 0.4392157, a: 1}
   attackableSlot: {r: 0.7882353, g: 0.16862746, b: 0.16862746, a: 1}
-  actionBarAnim: {fileID: 1207159726}
-  panelStats: {fileID: 1420850835}
-  panelActions: {fileID: 189716263}
-  buttonReloadEnergy: {fileID: 868289610}
-  charaName: {fileID: 117206517}
-  stageDesription: {fileID: 2143261324}
-  stageDescriptionTextual: {fileID: 667804242}
-  stageImagesArray:
-  - {fileID: 321350065}
-  - {fileID: 1410008306}
-  - {fileID: 1288331966}
-  - {fileID: 1106681118}
-  - {fileID: 804713978}
-  spriteVoidState: {fileID: 21300000, guid: 6413ea90969404597b57598c26b19c96, type: 3}
-  spriteCurrentState: {fileID: 21300000, guid: 0b1c8857294754a87b00ddba848708b5, type: 3}
-  armorValue: {fileID: 1462728046}
-  coverValue: {fileID: 1196383998}
   tooltipText: {fileID: 2116638869}
   tooltipHorizontalOffset: 5
   tooltipHVerticalOffset: 30
-  energyPref: {fileID: 1947974383139558, guid: dc45313882d443043bb68885c8629dae, type: 2}
-  energyBar: {fileID: 1116423132}
-  turnBar: {fileID: 842307783}
-  charaTurn: {fileID: 1884726873616320, guid: d24e5e85ce64a9f459753979d0b9717b, type: 2}
   mainCanvas: {fileID: 1584037950}
   attackWindow: {fileID: 1495101202226596, guid: 00df6908e3ddbec4e9515a3f0fcf50ed,
     type: 2}
+  charaTurn: {fileID: 1884726873616320, guid: d24e5e85ce64a9f459753979d0b9717b, type: 2}
   positionTakingWindow: {fileID: 1932180692782378, guid: 9397df2e705cdd343afb9018dbebc97b,
     type: 2}
+  energyPref: {fileID: 1947974383139558, guid: dc45313882d443043bb68885c8629dae, type: 2}
+  spriteVoidState: {fileID: 21300000, guid: 6413ea90969404597b57598c26b19c96, type: 3}
+  spriteCurrentState: {fileID: 21300000, guid: 0b1c8857294754a87b00ddba848708b5, type: 3}
   teamColors:
   - {r: 0.02745098, g: 0.09803922, b: 0.44705883, a: 1}
   - {r: 0.44705883, g: 0.02745098, b: 0.02745098, a: 1}
@@ -5872,6 +5890,7 @@ MonoBehaviour:
   canClick: 1
   charaInitList: []
   selectedCharacter: {fileID: 0}
+  currentCharacter: {fileID: 0}
 --- !u!1001 &1745386349
 Prefab:
   m_ObjectHideFlags: 0
@@ -6125,10 +6144,14 @@ MonoBehaviour:
   ToolitpATraversUI: 1
   TirDetectionEnnemi: 0
   ClicSurSlotSelection: 1
+  ReussitesADistance: 1
+  MAJTermes: 0
   CameraALaSouris: 1
   ToursDeJeu: 0
   IAEnnemi: 0
   PlusieursArmes: 0
+  TooltipsAttackWindow: 0
+  BoutonMoinsAttackWindow: 0
   Course: 0
   RetarderIntitative: 0
   LiensVersFaces: https://icon-icons.com/fr/pack/Face-Avatars-Icons/108

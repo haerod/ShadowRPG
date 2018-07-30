@@ -15,6 +15,7 @@ public class TurnTile : MonoBehaviour
     public Vector2 targetPoz;
 
     RectTransform rt;
+    bool isEndMovment = false;
 
     void Awake ()
     {
@@ -27,13 +28,19 @@ public class TurnTile : MonoBehaviour
 
     void Update()
     {
-        if (rt.position.y != targetPoz.y)
-            rt.position = Vector2.Lerp(rt.position, targetPoz, .15f);
+        if (isEndMovment)
+            rt.position += Vector3.right * 1000 * Time.deltaTime;
+        else
+        {
+            if (rt.position.y != targetPoz.y)
+                rt.position = Vector2.Lerp(rt.position, targetPoz, .15f);
 
-        if (Mathf.Abs(rt.position.y - targetPoz.y) < 1)
-            rt.position = targetPoz;
+            if (Mathf.Abs(rt.position.y - targetPoz.y) < 1)
+                rt.position = targetPoz;
+        }
     }
 
+    // Initialise les différentes propriétés de la tuile (nom, image, etc.)
     public void InitTile()
     {
         nameText.text = chara.charaName;
@@ -41,5 +48,21 @@ public class TurnTile : MonoBehaviour
         faceImage.sprite = chara.charaImage;
         backgroundImage.color = Dealer.instance.teamColors[chara.team];
         chara.turnTile = this;
+    }
+
+    // Lance la destruction de la tuile en cas de mort du personnage
+    public void DestroyItSelf()
+    {
+        isEndMovment = true;
+        Destroy(this.gameObject, 1f);
+    }
+
+    // Met à jour les infos de la tuile
+    public void UpdateLife(bool isDead)
+    {
+        if(isDead)
+            stateText.text = "";
+        else
+            stateText.text = chara.currentStage + "+ / " + chara.currentEnergy + " dés";
     }
 }

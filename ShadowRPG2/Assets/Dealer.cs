@@ -17,37 +17,20 @@ public class Dealer : MonoBehaviour
     public Color forbiddenSlot;
     public Color attackableSlot;
 
-    [Header("Action bar")]
-    public Animator actionBarAnim;
-    public GameObject panelStats;
-    [Space]
-    public GameObject panelActions;
-        public Button buttonReloadEnergy;
-    [Space]
-    public Text charaName;
-    public Text stageDesription;
-    public Text stageDescriptionTextual;
-    public Image[] stageImagesArray;
-    public Sprite spriteVoidState;
-    public Sprite spriteCurrentState;
-    public Text armorValue;
-    public Text coverValue;
-    [Space]
+    [Header("Tooltip text")]
     public Text tooltipText;
     public float tooltipHorizontalOffset;
     public float tooltipHVerticalOffset;
-    [Space]
-    public GameObject energyPref;
-    public Transform energyBar;
 
-    [Header("Turn bar")]
-    public RectTransform turnBar;
-    public GameObject charaTurn;
 
     [Header("Various objects")]
     public Transform mainCanvas;
     public GameObject attackWindow;
+    public GameObject charaTurn;
     public GameObject positionTakingWindow;
+    public GameObject energyPref;
+    public Sprite spriteVoidState;
+    public Sprite spriteCurrentState;
 
     [Header("Listes et Array de trucs")]
     public Color[] teamColors;

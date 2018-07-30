@@ -59,14 +59,13 @@ public class AttackWindow : MonoBehaviour
     {
         if(chara.currentAction == "Melee")
         {
-            chara.isMovingToSlot = 3;
+            chara.isMovingToSlot = 4;
             chara.SetOneBoolAnimTrue("Run");
         }
         if (chara.currentAction == "Distance")
             chara.HideRangeCircle();
         MainSelector.instance.StopAction();
         MainSelector.instance.ChangeCharaAction(0);
-        //Camera.main.GetComponent<CombatCamera>().BackToFreeMode();
         Destroy(this.gameObject);
     }
 

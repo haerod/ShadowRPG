@@ -18,9 +18,13 @@ public class TODOLIST : MonoBehaviour
     public bool TirDetectionEnnemi = false;
     [Tooltip("Lorsqu'on clique sur un slot pour sélectionner un perso, ce dernier n'est pas sélecionné")]
     public bool ClicSurSlotSelection = false;
+    [Tooltip("Lorsqu'on attaque à distance, le nombre de réussites affiche 0")]
+    public bool ReussitesADistance = false;
 
     [Header("Features Générales")]
 
+    [Tooltip("Virer l'aspect JDR pour rendre le jeu bitable")]
+    public bool MAJTermes = false;
     [Tooltip("La caméra doit pouvoir se déplacer à la souris")]
     public bool CameraALaSouris = false;
     [Tooltip("Les personnages peuvent jouer les uns après les autres")]
@@ -29,6 +33,10 @@ public class TODOLIST : MonoBehaviour
     public bool IAEnnemi = false;
     [Tooltip("Un personnage peut avoir plusieurs armes")]
     public bool PlusieursArmes = false;
+    [Tooltip("Le joueur doit comprendre comment fonctionne l'attack window grâce à des tooltips")]
+    public bool TooltipsAttackWindow = false;
+    [Tooltip("Le joueur peut enlever des dés misés dans l'Attack window")]
+    public bool BoutonMoinsAttackWindow = false;
 
     [Header("Features Actions")]
 

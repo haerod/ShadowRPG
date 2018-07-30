@@ -11,12 +11,9 @@ public class MainSelector : MonoBehaviour
     [HideInInspector]
     public static MainSelector instance;
     [HideInInspector]
-    public Character selectedCharacter;
+    public Character selectedCharacter; // Personnage sur lequel on a cliqué
 
-
-    private List<RectTransform> energyList = new List<RectTransform>();
     private bool isActionStarted;
-    private bool isShortcutAction;
     private int layerToIgnore = ~(1 << 8); // Layer du décor
 
 
@@ -37,8 +34,6 @@ public class MainSelector : MonoBehaviour
         if(canClick)
         {
             CheckClick();
-            if (isShortcutAction)
-                CheckShortcutsAction();
         }
     }
 
@@ -53,20 +48,20 @@ public class MainSelector : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
             {
-                //Clique sur un perso (sans barre d'action)
+                //Clique sur un perso
                 if (hit.transform.GetComponent<Character>() && (selectedCharacter == null || selectedCharacter.currentAction == "Idle"))
                 {
                     Character perso = hit.transform.GetComponent<Character>();
                     // PJ et en vie
                     if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
                     {
-                        HideActionBar();
+                        ActionBar.instance.HideActionBar();
                         selectedCharacter = perso;
-                        DisplayActionBar();
+                        ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.ReturnCurrentCharacter());
                         return;
                     }
                 }
-                //(IDEM) Clique sur le slot d'un perso (sans barre d'action)
+                //(IDEM) Clique sur le slot d'un perso
                 else if (hit.transform.tag == "Slot" && (selectedCharacter == null || selectedCharacter.currentAction == "Idle"))
                 {
                     if (hit.transform.GetComponent<Slot>().currentChara != null)
@@ -75,9 +70,9 @@ public class MainSelector : MonoBehaviour
                         // PJ et en vie
                         if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
                         {
-                            HideActionBar();
+                            ActionBar.instance.HideActionBar();
                             selectedCharacter = perso;
-                            DisplayActionBar();
+                            ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.ReturnCurrentCharacter());
                             return;
                         }
                     }
@@ -112,9 +107,9 @@ public class MainSelector : MonoBehaviour
                     if (selectedCharacter.currentAction == "Move")
                     {
                         selectedCharacter.StartMoveCharacter(tempSlot);
-                        HideActionBar();
-                        UpdateAndDisplaySelectedPlayerFeedback();
-                        UpdateCoverValue();
+                        ActionBar.instance.HideActionBar();
+                        ActionBar.instance.UpdateAndDisplaySelectedPlayerFeedback(selectedCharacter);
+                        ActionBar.instance.UpdateCoverValue(selectedCharacter);
                         canClick = false;
                         return;
                         //////////////
@@ -127,7 +122,7 @@ public class MainSelector : MonoBehaviour
                         cc.targetList.Add(selectedCharacter.transform);
                         cc.targetList.Add(tempSlot.currentChara.transform);
                         cc.isFreeMode = false;*/
-                        HideActionBar();
+                        ActionBar.instance.HideActionBar();
                         isActionStarted = true;
                         return;
                         //////////////
@@ -136,7 +131,7 @@ public class MainSelector : MonoBehaviour
                     if (selectedCharacter.currentAction == "Distance")
                     {
                         selectedCharacter.StartAttackDistance(tempSlot.currentChara);
-                        HideActionBar();
+                        ActionBar.instance.HideActionBar();
                         isActionStarted = true;
                         return;
                         //////////////
@@ -146,7 +141,7 @@ public class MainSelector : MonoBehaviour
                 // Enlève l'UI en cliquant dans le vide
                 else if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && selectedCharacter)
                 {
-                    HideActionBar();
+                    ActionBar.instance.HideActionBar();
                     selectedCharacter.currentSlot.HidePossibilities();
                     selectedCharacter.HideRangeCircle();
                     ChangeCharaAction(0);
@@ -160,19 +155,6 @@ public class MainSelector : MonoBehaviour
 
 
 
-
-    // Check les raccourics clavier - ACTION BAR
-    void CheckShortcutsAction()
-    {
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            ClickOnMovement();
-        }
-        else if (Input.GetKeyDown(KeyCode.Z))
-        {
-            ClickOnMelee();
-        }
-    }
 
     // Si le joueur clique sur le bouton MOUVEMENT
     public void ClickOnMovement()
@@ -210,65 +192,13 @@ public class MainSelector : MonoBehaviour
 
 
 
-
-
-    //Affiche la barre d'actions
-    void DisplayActionBar()
-    {
-        Dealer.instance.actionBarAnim.gameObject.SetActive(true);
-        Dealer.instance.actionBarAnim.SetBool("IsOpen", true);
-        Dealer.instance.panelActions.SetActive(true);
-        Dealer.instance.charaName.text = selectedCharacter.charaName;
-        Dealer.instance.panelStats.SetActive(true);
-        UpdateArmorValue();
-        UpdateCoverValue();
-        selectedCharacter.UpdateStage();
-        isShortcutAction = true;
-        GenerateEnergy();
-        UpdateAndDisplaySelectedPlayerFeedback();
-        Camera.main.GetComponent<CombatCamera>().isActionBarOpened = true;
-    }
-
-    //Masque la barre d'actions
-    void HideActionBar()
-    {
-        if(Dealer.instance.actionBarAnim.gameObject.activeInHierarchy)
-            Dealer.instance.actionBarAnim.SetBool("IsOpen", false);
-        Dealer.instance.panelActions.SetActive(false);
-        Dealer.instance.panelStats.SetActive(false);
-        Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
-        isShortcutAction = false;
-        HideEnergy();
-        Camera.main.GetComponent<CombatCamera>().isActionBarOpened = false;
-    }
-
-    // Met à jour la position et fait apparaitre le feedback montrant quel PJ a été sélectionné
-    public void UpdateAndDisplaySelectedPlayerFeedback()
-    {
-        Dealer.instance.selectedCharaFeedback.position = selectedCharacter.currentSlot.transform.position;
-        Dealer.instance.selectedCharaFeedback.gameObject.SetActive(true);
-    }
-
-    // Met à jour le text de valeur d'armure du selected character
-    void UpdateArmorValue()
-    {
-        Dealer.instance.armorValue.text = selectedCharacter.armor.ToString();
-    }
-
-    // Met à jour le text de valeur de couverture du selected character
-    void UpdateCoverValue()
-    {
-        Dealer.instance.coverValue.text = selectedCharacter.currentSlot.coverValue.ToString();
-    }
-
-
     // Donne la bonne action au chara
     // Si l'index = 0, tous les bools sont false et le personnage sélectionné Clear ses slots
     public void ChangeCharaAction(int boolIndex)
     {
 
         //selectedCharacter.DistibuteEnergy();
-        HideEnergy();
+        ActionBar.instance.HideEnergy();
 
         switch (boolIndex)
         {
@@ -290,35 +220,7 @@ public class MainSelector : MonoBehaviour
                 break;
         }
 
-        GenerateEnergy();
-    }
-
-    // Instancie les symboles Energie dans l'action bar
-    public void GenerateEnergy()
-    {
-        RectTransform prefEnergy = Dealer.instance.energyPref.GetComponent<RectTransform>();
-        RectTransform pozEnergyBar = Dealer.instance.energyBar.GetComponent<RectTransform>();
-        int sideOffset = 20;
-        int betweenOffset = 5;
-
-        for (int i = 0; i < selectedCharacter.currentEnergy; i++)
-        {
-            Vector2 pozEnergy = new Vector2(
-                pozEnergyBar.position.x - (pozEnergyBar.rect.width/2) + sideOffset + (prefEnergy.rect.width* i) + (betweenOffset * i),
-                pozEnergyBar.position.y);
-            RectTransform instaEnergyRt = Instantiate(Dealer.instance.energyPref, pozEnergy, Quaternion.identity, Dealer.instance.energyBar).GetComponent<RectTransform>();
-            energyList.Add(instaEnergyRt);
-        }
-    }
-
-    // Cache les symboles Energie dans l'action bar
-    void HideEnergy()
-    {
-        foreach(RectTransform but in energyList)
-        {
-            Destroy(but.gameObject);
-        }
-        energyList.Clear();
+        ActionBar.instance.GenerateEnergy(selectedCharacter);
     }
 
     //Arrête l'action lancée et retourne à la barre d'action (optionnel, if true)
@@ -326,7 +228,7 @@ public class MainSelector : MonoBehaviour
     {
         isActionStarted = false;
         if(displayActionBar)
-            DisplayActionBar();
+            ActionBar.instance.DisplayActionBar(selectedCharacter, true);
     }
 
     // Crée la turn list
@@ -370,7 +272,6 @@ public class MainSelector : MonoBehaviour
         }
 
         charaInitList.Reverse(); // Retourne la liste
-
-        Dealer.instance.turnBar.GetComponent<TurnBar>().CreateBar();
+        TurnBar.instance.CreateBar();
     }
 }
