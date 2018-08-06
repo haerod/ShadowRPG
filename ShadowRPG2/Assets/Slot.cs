@@ -9,7 +9,7 @@ public class Slot : MonoBehaviour
     [HideInInspector]
     public Character currentChara;
 
-    private int layerIgnoreAim = ~(1 >> 9);
+     [SerializeField] LayerMask lmIgnoreAim;
 
 
 	void Start ()
@@ -93,6 +93,7 @@ public class Slot : MonoBehaviour
         Vector3 origin = currentChara.aimLowPoz.position;
         Vector3 end;
 
+
         for (int i = 0; i < Dealer.instance.allSlotArray.Length; i++)
         {
             targetSlot = Dealer.instance.allSlotArray[i];
@@ -103,7 +104,7 @@ public class Slot : MonoBehaviour
                 // Elimine les slots hors de portée, vides et lui-même
             {
 
-                if (Physics.Raycast(origin, (end - origin), out hit, layerIgnoreAim)) // Raycast les slots
+                if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim)) // Raycast les slots
                 {
                     Debug.DrawLine(hit.transform.position, hit.transform.position + Vector3.up, Color.cyan, Mathf.Infinity);
                     Debug.DrawLine(origin, end, Color.blue, Mathf.Infinity);
@@ -113,7 +114,7 @@ public class Slot : MonoBehaviour
                         origin = currentChara.aimHighPoz.position;
                         end = Dealer.instance.SetVectorY(targetSlot.transform.position, currentChara.aimHighPoz.position.y);
 
-                        if (Physics.Raycast(origin, (end - origin), out hit, layerIgnoreAim)) // Raycast le slot depuis plus haut
+                        if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim)) // Raycast le slot depuis plus haut
                         {
                             Debug.DrawLine(origin, end, Color.green, Mathf.Infinity);
 
@@ -137,7 +138,8 @@ public class Slot : MonoBehaviour
                     }
                     else if (hit.transform.tag == "Character") // Si c'est un personnage
                     {
-                        print(hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara);
+                        //print(hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara);
+                        //print(hit.transform.GetComponent<Character>().charaName);
                         if (hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara) // Si c'est le personnage du slot
                         {
                             currentChara.allowedSlots.Add(targetSlot);

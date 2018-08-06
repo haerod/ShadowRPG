@@ -80,7 +80,9 @@ public class Character : MonoBehaviour
 
 
 
-    //Positionne le personnage au centre du slot
+    /// <summary>
+    /// Positionne le personnage au centre du slot
+    /// </summary>
     void PozOnSlot()
     {
         Vector3 vecPozSlot = new Vector3(currentSlot.transform.position.x, transform.position.y, currentSlot.transform.position.z);
@@ -198,7 +200,7 @@ public class Character : MonoBehaviour
         currentStage++;
         currentEnergy = maxEnergy;
         ActionBar.instance.UpdateStage(this);
-        ActionBar.instance.GenerateEnergy(this);
+        ActionBar.instance.UpdateEnergy(this);
     }
 
     // TERMINER UNE ACTION

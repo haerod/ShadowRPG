@@ -8,7 +8,7 @@ public class AttackWindow : MonoBehaviour
     public Character chara;
     public string attackName;
 
-    private int engagedDices;
+    private int engagedEnergy;
 
     [Space]
 
@@ -19,40 +19,73 @@ public class AttackWindow : MonoBehaviour
     [SerializeField]
     private Button buttonRollDices;
     [SerializeField]
-    private Button addDices;
+    private Button addEnergy;
     [SerializeField]
-    private RectTransform diceBar;
+    private Button removeEnergy;
+    [SerializeField]
+    private Transform energyBar;
 
     private List<GameObject> diceList = new List<GameObject>();
+
+    Sprite fullEnergySprite;
+    Sprite emptyEnergySprite;
+    Image[] energyImagesArray;
 
     // Constructeur
     public void ConstructBar()
     {
+        energyImagesArray = new Image[8];
+        for (int i = 0; i < energyImagesArray.Length; i++)
+        {
+            energyImagesArray[i] = energyBar.GetChild(i).GetComponent<Image>();
+        }
+        fullEnergySprite = Dealer.instance.fullEnergySprite;
+        emptyEnergySprite = Dealer.instance.emptyEnergySprite;
+
         nameText.text = attackName;
-        dicesText.text = engagedDices.ToString();
+        dicesText.text = engagedEnergy.ToString();
         if(chara.currentEnergy == 0)
         {
-            addDices.interactable = false;
+            addEnergy.interactable = false;
         }
+        removeEnergy.interactable = false;
         buttonRollDices.interactable = false;
-        GenerateEnergy();
-        buttonRollDices.onClick.AddListener(delegate { chara.RollDices(engagedDices); });
+        UpdateEnergy();
+        buttonRollDices.onClick.AddListener(delegate { chara.RollDices(engagedEnergy); });
+        transform.SetAsFirstSibling();
     }
 
-    // Si le joueur clique sur ADD DICES, ajoute un dé
-    public void ClickOnAddDice()
+    // Si le joueur clique sur ADD ENERGY, engage un point d'énergie
+    public void ClickOnAddEnergy()
     {
-        if(chara.currentEnergy - engagedDices > 0)
+        if(chara.currentEnergy - engagedEnergy > 0)
         {
-            engagedDices++;
-            dicesText.text = engagedDices.ToString();
+            engagedEnergy++;
+            dicesText.text = engagedEnergy.ToString();
             buttonRollDices.interactable = true;
-            HideEnergy();
-            GenerateEnergy();
+            UpdateEnergy();
+            removeEnergy.interactable = true;
         }
-        if (chara.currentEnergy - engagedDices <= 0)
-            addDices.interactable = false;
+        if (chara.currentEnergy - engagedEnergy <= 0)
+            addEnergy.interactable = false;
     }
+
+    // Si le joueur clique sur REMOVE ENERGY, désengage un point d'énergie
+    public void ClickOnRemoveEnergy()
+    {
+        if (engagedEnergy > 0) // Effect
+        {
+            engagedEnergy--;
+            dicesText.text = engagedEnergy.ToString();
+            UpdateEnergy();
+            addEnergy.interactable = true;
+        }
+        if (engagedEnergy <= 0) // Disable after effect ?
+        {
+            removeEnergy.interactable = false;
+        }
+    }
+
 
     // Si le joueur clique sur STOP ACTION, ramène le jeu à la normale
     public void ClickStopAction()
@@ -69,31 +102,19 @@ public class AttackWindow : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    
-
-    // Instancie les images Energie dans l'action bar
-    void GenerateEnergy()
+    // Met à jour l'énergie
+    void UpdateEnergy()
     {
-        RectTransform prefEnergy = Dealer.instance.energyPref.GetComponent<RectTransform>();
-        int sideOffset = 20;
-        int betweenOffset = 5;
-
-        for (int i = 0; i < (chara.currentEnergy-engagedDices); i++)
+        for (int i = 0; i < energyImagesArray.Length; i++)
         {
-            Vector2 pozEnergy = new Vector2(
-                diceBar.position.x - (diceBar.rect.width / 2) + sideOffset + (prefEnergy.rect.width * i) + (betweenOffset * i),
-                diceBar.position.y);
-            RectTransform instaEnergyRt = Instantiate(Dealer.instance.energyPref, pozEnergy, Quaternion.identity, diceBar).GetComponent<RectTransform>();
-            diceList.Add(instaEnergyRt.gameObject);
-        }
-    }
-
-    // Détruit les images Energie
-    void HideEnergy()
-    {
-        foreach(GameObject go in diceList)
-        {
-            Destroy(go);
+            if (i <= chara.currentEnergy - engagedEnergy - 1)
+            {
+                energyImagesArray[i].sprite = fullEnergySprite;
+            }
+            else
+            {
+                energyImagesArray[i].sprite = emptyEnergySprite;
+            }
         }
     }
 }

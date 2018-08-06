@@ -214,7 +214,7 @@ public class MainSelector : MonoBehaviour
                 break;
         }
 
-        ActionBar.instance.GenerateEnergy(selectedCharacter);
+        ActionBar.instance.UpdateEnergy(selectedCharacter);
     }
 
     //Arrête l'action lancée et retourne à la barre d'action (optionnel, if true)

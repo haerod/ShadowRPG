@@ -14,7 +14,6 @@ public class ActionBar : MonoBehaviour
     [SerializeField] Text armorValueTxt; 
     [SerializeField] Text coverValueTxt; 
     [SerializeField] Text stageDesriptionTxt;
-    [SerializeField] Text stageDescriptionTextual;
     [SerializeField] RectTransform energyBarRt;
     [SerializeField] Image[] stageImagesArray;
 
@@ -24,15 +23,27 @@ public class ActionBar : MonoBehaviour
     
     [Space]
 
-    [SerializeField] private string[] stageDescription;
+    [SerializeField] string[] stageDescription;
+
+    [Space]
+
+    [SerializeField] Sprite fullEnergySprite;
+    [SerializeField] Sprite emptyEnergySprite;
+
+    [Space]
+    [SerializeField] RectTransform barStage;
+    [SerializeField] RectTransform barProba;
+    [SerializeField] RectTransform barTransition;
 
 
     Animator anim;
 
     List<RectTransform> energyList = new List<RectTransform>();
+    Image[] energyImagesArray;
 
     [HideInInspector]
     public static ActionBar instance;
+
 
 
 
@@ -47,6 +58,11 @@ public class ActionBar : MonoBehaviour
         }
 
         anim = GetComponent<Animator>();
+        energyImagesArray = new Image[8];
+        for (int i = 0; i < energyImagesArray.Length; i++)
+        {
+            energyImagesArray[i] = energyBarRt.transform.GetChild(i).GetComponent<Image>();
+        }
     }
 
     void Start()
@@ -70,7 +86,7 @@ public class ActionBar : MonoBehaviour
         charaNameTxt.text = selectedCharacter.charaName;
         UpdateArmorValue(selectedCharacter);
         UpdateCoverValue(selectedCharacter);
-        GenerateEnergy(selectedCharacter);
+        UpdateEnergy(selectedCharacter);
 
         UpdateStage(selectedCharacter);
         MainSelector.instance.DisplaySelectedPlayerFeedback(selectedCharacter);
@@ -108,13 +124,15 @@ public class ActionBar : MonoBehaviour
     public void UpdateStage(Character selectedCharacter)
     {
         stageDesriptionTxt.text = selectedCharacter.currentStage + "+";
-        stageDescriptionTextual.text = stageDescription[selectedCharacter.currentStage];
         for (int i = 0; i < stageImagesArray.Length; i++)
         {
             if (i != (selectedCharacter.currentStage - 2))
                 stageImagesArray[i].sprite = Dealer.instance.spriteVoidState;
             else
+            {
                 stageImagesArray[i].sprite = Dealer.instance.spriteCurrentState;
+                DisplayStageProbaTransition(stageImagesArray[i].GetComponent<RectTransform>().position.x);
+            }
         }
 
         if (selectedCharacter.currentStage < 6 && selectedCharacter.currentEnergy != selectedCharacter.maxEnergy)
@@ -123,10 +141,43 @@ public class ActionBar : MonoBehaviour
             buttonReloadEnergy.interactable = false;
     }
 
+    // Met à jour les symboles énergie
+    public void UpdateEnergy(Character selectedCharacter)
+    {
+        for (int i = 0; i < energyImagesArray.Length; i++)
+        {
+            if(i <= selectedCharacter.currentEnergy)
+            {
+                energyImagesArray[i].sprite = fullEnergySprite;
+            }
+            else
+            {
+                energyImagesArray[i].sprite = emptyEnergySprite;
+            }
+        }
+    }
+
+    // Cache les symboles Energie dans l'action bar
+    public void HideEnergy()
+    {
+        foreach (RectTransform but in energyList)
+        {
+            Destroy(but.gameObject);
+        }
+        energyList.Clear();
+    }
+
+    // Affiche les lines entre l'affichage des stages et des probas
+    void DisplayStageProbaTransition(float xPozStage)
+    {
+        barStage.position = new Vector2(xPozStage, barStage.position.y);
+        float widthTransition = Mathf.Abs(barProba.position.x - barStage.position.x);
+        barTransition.position = new Vector2((barProba.position.x + barStage.position.x)/2, barTransition.position.y);
+        barTransition.sizeDelta = new Vector2 (widthTransition, barTransition.sizeDelta.y);
+    }
 
 
-
-    // Instancie les symboles Energie dans l'action bar
+    /*// (OLD) Instancie les symboles Energie dans l'action bar 
     public void GenerateEnergy(Character selectedCharacter)
     {
         RectTransform prefEnergy = Dealer.instance.energyPref.GetComponent<RectTransform>();
@@ -141,18 +192,5 @@ public class ActionBar : MonoBehaviour
             RectTransform instaEnergyRt = Instantiate(Dealer.instance.energyPref, pozEnergy, Quaternion.identity, energyBarRt.transform).GetComponent<RectTransform>();
             energyList.Add(instaEnergyRt);
         }
-    }
-
-    // Cache les symboles Energie dans l'action bar
-    public void HideEnergy()
-    {
-        foreach (RectTransform but in energyList)
-        {
-            Destroy(but.gameObject);
-        }
-        energyList.Clear();
-    }
-
-
-
+    }*/
 }

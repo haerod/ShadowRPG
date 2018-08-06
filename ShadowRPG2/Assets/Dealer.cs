@@ -31,6 +31,8 @@ public class Dealer : MonoBehaviour
     public GameObject energyPref;
     public Sprite spriteVoidState;
     public Sprite spriteCurrentState;
+    public Sprite fullEnergySprite;
+    public Sprite emptyEnergySprite;
 
     [Header("Listes et Array de trucs")]
     public Color[] teamColors;
@@ -91,5 +93,12 @@ public class Dealer : MonoBehaviour
             objectListToShuffle.RemoveAt(index);
         }
         return tempList;
+    }
+
+    // Donne la proportion (entre 0 et 1) d'une valeur située entre deux valeurs
+    public float PercentBetweenTwoFloats(float maxValue, float minValue, float currentValue)
+    {
+        float result = (currentValue - minValue) / (maxValue - minValue);
+        return result;
     }
 }

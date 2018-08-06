@@ -86,6 +86,9 @@ MonoBehaviour:
   connectedSlots: []
   coverValue: 0
   currentChara: {fileID: 0}
+  lmIgnoreAim:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &114312970016721928
 MonoBehaviour:
   m_ObjectHideFlags: 1

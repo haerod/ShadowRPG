@@ -221,18 +221,21 @@ public class CombatCamera : MonoBehaviour
     }
 
     
+    // Centre la caméra sur le personnage
     void CenterOnCharacter()
     {
         float zoomMax = 3;
         float zoomMin = 12;
-        float pctY = transform.position.y / maxY;
-        
+        float pctY = Dealer.instance.PercentBetweenTwoFloats(maxY, minY, transform.position.y); 
+            // Calcule à quel pourcentage de zoom on en est
+        float offsetZ = zoomMax + (zoomMin - zoomMax) * pctY; 
+            // Calucule l'offset en z en fonction du pourcentage de zoom
 
         Transform chara = TurnBar.instance.GetCurrentCharacter().transform;
         Vector3 poz = new Vector3(
             chara.position.x,
-            (transform.position.y * zoomMin) / maxY,
-            chara.position.z - 12);
+            transform.position.y,
+            chara.position.z - offsetZ);
 
         transform.position = Vector3.Lerp(transform.position, poz, 0.1f);
     }
