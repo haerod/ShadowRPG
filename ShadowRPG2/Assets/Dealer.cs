@@ -11,11 +11,12 @@ public class Dealer : MonoBehaviour
     [Header("Materials")]
     public Material connectedSlotsLR;
 
-    [Header("Materials")]
+    [Header("Colors")]
     public Color neutralSlot;
     public Color freeSlot;
     public Color forbiddenSlot;
     public Color attackableSlot;
+    public Color greyedStar;
 
     [Header("Tooltip text")]
     public Text tooltipText;

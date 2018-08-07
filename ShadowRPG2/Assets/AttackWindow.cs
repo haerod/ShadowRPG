@@ -109,11 +109,12 @@ public class AttackWindow : MonoBehaviour
         {
             if (i <= chara.currentEnergy - engagedEnergy - 1)
             {
-                energyImagesArray[i].sprite = fullEnergySprite;
+                energyImagesArray[i].color = Color.white;
             }
             else
             {
-                energyImagesArray[i].sprite = emptyEnergySprite;
+                energyImagesArray[i].color = Dealer.instance.greyedStar;
+                ;
             }
         }
     }

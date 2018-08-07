@@ -145,14 +145,14 @@ public class ActionBar : MonoBehaviour
     public void UpdateEnergy(Character selectedCharacter)
     {
         for (int i = 0; i < energyImagesArray.Length; i++)
-        {
-            if(i <= selectedCharacter.currentEnergy)
+        { 
+            if(i <= selectedCharacter.currentEnergy - 1)
             {
-                energyImagesArray[i].sprite = fullEnergySprite;
+                energyImagesArray[i].color = Color.white;
             }
             else
             {
-                energyImagesArray[i].sprite = emptyEnergySprite;
+                energyImagesArray[i].color = Dealer.instance.greyedStar;
             }
         }
     }
