@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class TurnBar : MonoBehaviour
 {
     public int currentInitIndex;
-
     public float distBetweenImages;
+    [SerializeField] RectTransform currentCharaSquare;
 
     GameObject prefabTurnTile;
     RectTransform rt;
@@ -47,13 +47,13 @@ public class TurnBar : MonoBehaviour
         int max = 0;
         List<Character> tempList = new List<Character>();
 
-        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule min
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule init min
         {
             if (Dealer.instance.allCharacters[i].init < min)
                 min = Dealer.instance.allCharacters[i].init;
         }
 
-        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule max
+        for (int i = 0; i < Dealer.instance.allCharacters.Length; i++) // Calcule init max
         {
             if (Dealer.instance.allCharacters[i].init > max)
                 max = Dealer.instance.allCharacters[i].init;
@@ -92,7 +92,8 @@ public class TurnBar : MonoBehaviour
         for (int i = 0; i < charaInitList.Count; i++)
         {
             vecPoz = new Vector2(rt.position.x,
-                rt.position.y - (size * i) - (distBetweenImages * i));
+                (rt.position.y + rt.rect.height / 2 - size) // position de base
+                - (size * i) - (distBetweenImages * i)); // position des tuiles entre elles 
             pozTurnTile.Add(vecPoz);
             TurnTile instaTurnTile = Instantiate(prefabTurnTile, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
             turnTileList.Add(instaTurnTile);
@@ -101,6 +102,9 @@ public class TurnBar : MonoBehaviour
             instaTurnTile.index = i;
             instaTurnTile.gameObject.name = "TurnTile(" + instaTurnTile.chara.charaName + ")";
             instaTurnTile.InitTile();
+
+            if (i == 0) // positionne currentCharaSquare
+                currentCharaSquare.position = vecPoz;
         }
     }
 

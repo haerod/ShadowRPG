@@ -20,6 +20,7 @@ public class Dealer : MonoBehaviour
 
     [Header("Tooltip text")]
     public Text tooltipText;
+    public RectTransform tooltipUI;
     public float tooltipHorizontalOffset;
     public float tooltipHVerticalOffset;
 

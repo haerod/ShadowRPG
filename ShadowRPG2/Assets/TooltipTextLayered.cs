@@ -35,6 +35,9 @@ public class TooltipTextLayered : MonoBehaviour
         Dealer.instance.tooltipText.text = textToDisplay;
         poz = new Vector3(poz.x + 200f, poz.y - 60f, poz.z);
         tooltip.position = poz;
+        Dealer.instance.tooltipUI.sizeDelta = new Vector2(
+            Dealer.instance.tooltipUI.rect.width,
+            Dealer.instance.tooltipText.preferredHeight + 20);
         tooltip.gameObject.SetActive(true);
     }
 

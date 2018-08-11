@@ -42,6 +42,9 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerEnter(PointerEventData eventData)
     {
         Dealer.instance.tooltipText.text = textToDisplay;
+        Dealer.instance.tooltipUI.sizeDelta = new Vector2(
+            Dealer.instance.tooltipUI.rect.width, 
+            Dealer.instance.tooltipText.preferredHeight + 20);
         tooltip.position = new Vector2(xTooltip, yTooltip);
         tooltip.gameObject.SetActive(true);
     }

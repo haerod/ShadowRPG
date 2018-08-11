@@ -8,28 +8,17 @@ public class AttackWindow : MonoBehaviour
     public Character chara;
     public string attackName;
 
-    private int engagedEnergy;
-
     [Space]
 
-    [SerializeField]
-    private Text nameText;
-    [SerializeField]
-    private Text dicesText;
-    [SerializeField]
-    private Button buttonRollDices;
-    [SerializeField]
-    private Button addEnergy;
-    [SerializeField]
-    private Button removeEnergy;
-    [SerializeField]
-    private Transform energyBar;
+    [SerializeField] Text nameText;
+    [SerializeField] Text dicesText;
+    [SerializeField] Button buttonRollDices;
+    [SerializeField] Button addEnergy;
+    [SerializeField] Button removeEnergy;
+    [SerializeField] Transform energyBar;
 
-    private List<GameObject> diceList = new List<GameObject>();
-
-    Sprite fullEnergySprite;
-    Sprite emptyEnergySprite;
     Image[] energyImagesArray;
+    int engagedEnergy;
 
     // Constructeur
     public void ConstructBar()
@@ -39,8 +28,6 @@ public class AttackWindow : MonoBehaviour
         {
             energyImagesArray[i] = energyBar.GetChild(i).GetComponent<Image>();
         }
-        fullEnergySprite = Dealer.instance.fullEnergySprite;
-        emptyEnergySprite = Dealer.instance.emptyEnergySprite;
 
         nameText.text = attackName;
         dicesText.text = engagedEnergy.ToString();

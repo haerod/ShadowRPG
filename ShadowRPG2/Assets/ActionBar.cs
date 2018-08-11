@@ -16,6 +16,7 @@ public class ActionBar : MonoBehaviour
     [SerializeField] Text stageDesriptionTxt;
     [SerializeField] RectTransform energyBarRt;
     [SerializeField] Image[] stageImagesArray;
+    [SerializeField] Image[] separationsArray;
 
     [Space]
 
@@ -80,8 +81,15 @@ public class ActionBar : MonoBehaviour
         anim.SetBool("IsOpen", true);
 
         panelStats.SetActive(true);
-        if(displayActions)
+        if (displayActions) // Si demandé, affiche les actions et les séparations entre les panels
+        {
             panelActions.SetActive(true);
+
+            for (int i = 0; i < separationsArray.Length; i++)
+            {
+                separationsArray[i].gameObject.SetActive(true);
+            }
+        }
 
         charaNameTxt.text = selectedCharacter.charaName;
         UpdateArmorValue(selectedCharacter);
@@ -100,6 +108,10 @@ public class ActionBar : MonoBehaviour
 
         panelActions.SetActive(false);
         panelStats.SetActive(false);
+        for (int i = 0; i < separationsArray.Length; i++)
+        {
+            separationsArray[i].gameObject.SetActive(false);
+        }
         Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
         HideEnergy();
         Camera.main.GetComponent<CombatCamera>().isActionBarOpened = false;

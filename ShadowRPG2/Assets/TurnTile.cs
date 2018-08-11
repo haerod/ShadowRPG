@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class TurnTile : MonoBehaviour
 {
     public Text nameText;
-    public Text stateText;
     public Character chara;
     public Image faceImage;
     public Image backgroundImage;
@@ -20,9 +19,8 @@ public class TurnTile : MonoBehaviour
     void Awake ()
     {
         backgroundImage = GetComponent<Image>();
-        nameText = transform.GetChild(0).GetComponent<Text>();
-        stateText = transform.GetChild(1).GetComponent<Text>();
-        faceImage = transform.GetChild(2).GetComponent<Image>();
+        nameText = transform.GetChild(1).GetComponent<Text>();
+        faceImage = transform.GetChild(0).GetComponent<Image>();
         rt = GetComponent<RectTransform>();
     }
 
@@ -44,7 +42,6 @@ public class TurnTile : MonoBehaviour
     public void InitTile()
     {
         nameText.text = chara.charaName;
-        stateText.text = chara.currentStage + "+ / " + chara.currentEnergy + " dés";
         faceImage.sprite = chara.charaImage;
         backgroundImage.color = Dealer.instance.teamColors[chara.team];
         chara.turnTile = this;
@@ -55,14 +52,5 @@ public class TurnTile : MonoBehaviour
     {
         isEndMovment = true;
         Destroy(this.gameObject, 1f);
-    }
-
-    // Met à jour les infos de la tuile
-    public void UpdateLife(bool isDead)
-    {
-        if(isDead)
-            stateText.text = "";
-        else
-            stateText.text = chara.currentStage + "+ / " + chara.currentEnergy + " dés";
     }
 }

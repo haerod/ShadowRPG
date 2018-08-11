@@ -237,12 +237,10 @@ public class Character : MonoBehaviour
         {
             Death();
             TurnBar.instance.RemoveTileAt(turnTile.index);
-            turnTile.UpdateLife(true);
             return true;
             ///////
         }
         currentStage += totalDamages;
-        turnTile.UpdateLife(false);
         ActionBar.instance.UpdateStage(this);
         return false;
     }
