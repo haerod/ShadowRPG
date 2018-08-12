@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 950, y: 571}
+  m_MinSize: {x: 950, y: 613}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -43,7 +43,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 950, y: 571}
+  m_MinSize: {x: 950, y: 613}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &3
 MonoBehaviour:
@@ -108,10 +108,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 911, y: 521}
-  m_MaxSize: {x: 22006, y: 12021}
+  m_MinSize: {x: 917, y: 563}
+  m_MaxSize: {x: 22012, y: 12063}
   vertical: 0
-  controlID: 58164
+  controlID: 4015
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -133,10 +133,10 @@ MonoBehaviour:
     y: 0
     width: 1154
     height: 947
-  m_MinSize: {x: 202, y: 521}
-  m_MaxSize: {x: 4002, y: 12021}
+  m_MinSize: {x: 202, y: 563}
+  m_MaxSize: {x: 4002, y: 12063}
   vertical: 1
-  controlID: 58143
+  controlID: 4016
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -395,14 +395,14 @@ MonoBehaviour:
     width: 1152
     height: 401
   m_SceneLighting: 1
-  lastFramingTime: 13111.859772610567
+  lastFramingTime: 7246.665800813251
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 301.1294, y: 187.70842, z: -46.075302}
+    m_Target: {x: 149.95001, y: 206.56125, z: 0}
     speed: 2
-    m_Value: {x: 301.1294, y: 187.70842, z: -46.075302}
+    m_Value: {x: 149.95001, y: 206.56125, z: 0}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -425,13 +425,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.3594051, y: 0.07909418, z: -0.030589974, w: -0.92932045}
+    m_Target: {x: -0.48286912, y: -0.01628183, z: 0.008978896, w: -0.87549514}
     speed: 2
-    m_Value: {x: -0.3594051, y: 0.07909418, z: -0.030589974, w: -0.92932045}
+    m_Value: {x: -0.48286912, y: -0.01628183, z: 0.008978896, w: -0.87549514}
   m_Size:
-    m_Target: 229.21666
+    m_Target: 227.86476
     speed: 2
-    m_Value: 229.21666
+    m_Value: 227.86476
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -603,9 +603,9 @@ MonoBehaviour:
     height: 926
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 34360000
-    m_LastClickedID: 13876
-    m_ExpandedIDs: 3845eeff8cb8eeff4a7cf3ff62c4f6ff48b0faffa0a4fbffa6a4fbff0a11fcffa476fcff262ffdff2457feffa6fbffff00000000f63300001a350000bc35000014360000
+    m_SelectedIDs: fc330000
+    m_LastClickedID: 13308
+    m_ExpandedIDs: a6fbffff0000000072350000ca35000054360000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -666,19 +666,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets
+    - Assets/PREFABS
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets
+  - Assets/PREFABS
   m_LastFoldersGridSize: 16
   m_LastProjectPath: D:\ShadowRPG_GitStocked\ShadowRPG2
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 4a270000
-    m_LastClickedID: 10058
-    m_ExpandedIDs: 000000004a2700007e2c0000ca2f0000c6310000e8390000ea390000ec390000ee39000000ca9a3bffffff7f
+    m_SelectedIDs: 24300000
+    m_LastClickedID: 12324
+    m_ExpandedIDs: 000000004a2700007e2c0000d02f0000cc310000ae3a0000b03a0000b23a0000b43a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -706,7 +706,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000004a2700007e2c0000ca2f0000c6310000e8390000ea390000ec390000ee39000000ca9a3bffffff7f
+    m_ExpandedIDs: 000000004a2700007e2c0000d02f0000cc310000ae3a0000b03a0000b23a0000b43a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

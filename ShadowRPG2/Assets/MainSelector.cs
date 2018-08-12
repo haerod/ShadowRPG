@@ -178,7 +178,7 @@ public class MainSelector : MonoBehaviour
     // Si le joueur clique sur le bouton RECHARGER ENERGIE
     public void ClickOnReloadState()
     {
-        if(selectedCharacter.currentStage < 6)
+        if(selectedCharacter.currentLife > 1)
         {
             selectedCharacter.ReloadEnergy();
         }

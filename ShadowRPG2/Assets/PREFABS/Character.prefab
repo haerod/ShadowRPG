@@ -1133,18 +1133,11 @@ MonoBehaviour:
   currentEnergy: 8
   maxEnergy: 8
   stockedEnergy: 0
-  currentStage: 6
-  maxStage: 6
-  stageDescription:
-  - Rien
-  - Rien
-  - En forme
-  - "Amoch\xE9"
-  - Mal en point
-  - "Ext\xE9nu\xE9"
-  - A bout de forces
+  currentLife: 5
   armor: 0
   range: 15
+  init: 0
+  percentByLife: 000000000a0000001e00000032000000460000005a000000
   currentSlot: {fileID: 0}
   currentAction: Idle
   aimLowPoz: {fileID: 4622802167247578}
@@ -1156,6 +1149,7 @@ MonoBehaviour:
   isDead: 0
   allowedSlots: []
   targetedBy: {fileID: 0}
+  turnTile: {fileID: 0}
 --- !u!120 &120841945315540342
 LineRenderer:
   m_ObjectHideFlags: 1

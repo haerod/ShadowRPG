@@ -946,8 +946,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textToDisplay: "Plus votre <b>\xE9tat</b> est bon, plus vous avez de chances de
-    r\xE9ussite en utilisant des <b>aptitudes</b>.\n\n<i>Exemple</i> : 3+ signifie
-    qu'une <b>\xE9nergie</b> utilis\xE9e fera une <b>r\xE9ussite</b> sur 3 ou plus."
+    transformer vos points d'<b>\xE9nergie</b> en <b>r\xE9ussites</b>.\n\n<i>Exemple</i>
+    : 90% signifie qu'un point d'<b>\xE9nergie</b> utilis\xE9 a 90% de chance d'\xEAtre
+    transform\xE9 en  <b>r\xE9ussite</b>."
 --- !u!1001 &186243527
 Prefab:
   m_ObjectHideFlags: 0
@@ -4626,11 +4627,11 @@ MonoBehaviour:
   stageDesriptionTxt: {fileID: 2143261324}
   energyBarRt: {fileID: 1116423132}
   stageImagesArray:
-  - {fileID: 321350065}
-  - {fileID: 1410008306}
-  - {fileID: 1288331966}
-  - {fileID: 1106681118}
   - {fileID: 804713978}
+  - {fileID: 1106681118}
+  - {fileID: 1288331966}
+  - {fileID: 1410008306}
+  - {fileID: 321350065}
   separationsArray:
   - {fileID: 1988320246}
   buttonReloadEnergy: {fileID: 977004198}
@@ -6086,7 +6087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8479,7 +8480,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2+
+  m_Text: 50%
 --- !u!222 &2143261325
 CanvasRenderer:
   m_ObjectHideFlags: 0

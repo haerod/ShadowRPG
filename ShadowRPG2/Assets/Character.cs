@@ -14,12 +14,11 @@ public class Character : MonoBehaviour
     public int maxEnergy;
     [HideInInspector]
     public int stockedEnergy;
-    public int currentStage;
-    [SerializeField]
-    private int maxStage;
+    public int currentLife;
     public int armor;
     public float range;
     public int init;
+    public int[] percentByLife;
 
     private int successes;
 
@@ -197,7 +196,7 @@ public class Character : MonoBehaviour
     // RECHARGER L'ENERGIE
     public void ReloadEnergy()
     {
-        currentStage++;
+        currentLife--;
         currentEnergy = maxEnergy;
         ActionBar.instance.UpdateStage(this);
         ActionBar.instance.UpdateEnergy(this);
@@ -233,14 +232,14 @@ public class Character : MonoBehaviour
 
         ShowFeedbackAction(1, transform.position, totalDamages);
 
-        if (currentStage + totalDamages > 6)
+        if (currentLife - totalDamages <= 0)
         {
             Death();
             TurnBar.instance.RemoveTileAt(turnTile.index);
             return true;
             ///////
         }
-        currentStage += totalDamages;
+        currentLife -= totalDamages;
         ActionBar.instance.UpdateStage(this);
         return false;
     }
@@ -259,23 +258,23 @@ public class Character : MonoBehaviour
     // Roule les dés et ramène le jeu à la normale
     public void RollDices(int engagedDices)
     {
-        int stage = currentStage;
+        int pct = percentByLife[currentLife];
         int result;
         for (int i = 0; i < engagedDices; i++)
         {
-            result = Random.Range(1, 7);
-            if (result >= stage)
+            result = Random.Range(1, 101);
+            if (result <= pct)
             {
                 successes++;
             }
 
             //Dé explosif
-            if (result == 6)
+            if (result <= 15)
             {
                 while (result == 6)
                 {
-                    result = Random.Range(1 , 7);
-                    if (result >= stage)
+                    result = Random.Range(1 , 101);
+                    if (result <= 15)
                     {
                         successes++;
                     }
@@ -295,8 +294,7 @@ public class Character : MonoBehaviour
         }
     }
 
-
-    // Met tous les bools del'animator à false (remet le personnage en iddle)
+    // Met tous les bools de l'animator à false (remet le personnage en iddle)
     public void SetAllBoolAnimFalse()
     {
         foreach (AnimatorControllerParameter parameter in anim.parameters)

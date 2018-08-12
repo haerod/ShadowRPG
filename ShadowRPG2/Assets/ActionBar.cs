@@ -135,19 +135,21 @@ public class ActionBar : MonoBehaviour
     // Met à jour l'etat du personnage et bloque l'action reload
     public void UpdateStage(Character selectedCharacter)
     {
-        stageDesriptionTxt.text = selectedCharacter.currentStage + "+";
+        stageDesriptionTxt.text = selectedCharacter.percentByLife[selectedCharacter.currentLife] + "%";
         for (int i = 0; i < stageImagesArray.Length; i++)
         {
-            if (i != (selectedCharacter.currentStage - 2))
-                stageImagesArray[i].sprite = Dealer.instance.spriteVoidState;
-            else
+            if (i == selectedCharacter.currentLife -1)
             {
                 stageImagesArray[i].sprite = Dealer.instance.spriteCurrentState;
                 DisplayStageProbaTransition(stageImagesArray[i].GetComponent<RectTransform>().position.x);
             }
+            else
+            {
+                stageImagesArray[i].sprite = Dealer.instance.spriteVoidState;
+            }
         }
 
-        if (selectedCharacter.currentStage < 6 && selectedCharacter.currentEnergy != selectedCharacter.maxEnergy)
+        if (selectedCharacter.currentLife > 1 && selectedCharacter.currentEnergy != selectedCharacter.maxEnergy)
             buttonReloadEnergy.interactable = true;
         else
             buttonReloadEnergy.interactable = false;
