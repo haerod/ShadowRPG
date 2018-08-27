@@ -8,7 +8,7 @@ public class PositionTakingWindow : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(StopPunchAction());
+        //StartCoroutine(StopPunchAction());
     }
 
     IEnumerator StopPunchAction()

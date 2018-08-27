@@ -222,6 +222,7 @@
     <Compile Include="Assets\ActionBar.cs" />
     <Compile Include="Assets\AttackWindow.cs" />
     <Compile Include="Assets\Character.cs" />
+    <Compile Include="Assets\CharaLinkAnim.cs" />
     <Compile Include="Assets\CircleLineRenderer.cs" />
     <Compile Include="Assets\CombatCamera.cs" />
     <Compile Include="Assets\Dealer.cs" />

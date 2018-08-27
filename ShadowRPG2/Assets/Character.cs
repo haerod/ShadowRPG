@@ -32,21 +32,15 @@ public class Character : MonoBehaviour
     [SerializeField] float movementSpeed;
     public Sprite charaImage;
 
-    private AnimationEvent shootEvent;
+
     private AttackWindow aw;
-    private Character currentTarget;
-    [HideInInspector]
-    public Animator anim;
-    [HideInInspector]
-    public int isMovingToSlot;
-    [HideInInspector]
-    public bool isDead = false;
-    [HideInInspector]
-    public List<Slot> allowedSlots;
-    [HideInInspector]
-    public Character targetedBy;
-    [HideInInspector]
-    public TurnTile turnTile;
+    [HideInInspector] public Character currentTarget;
+    [HideInInspector] public Animator anim;
+    [HideInInspector] public int isMovingToSlot;
+    [HideInInspector] public bool isDead = false;
+    [HideInInspector] public List<Slot> allowedSlots;
+    [HideInInspector] public Character targetedBy;
+    [HideInInspector] public TurnTile turnTile;
 
     CircleLineRenderer lineRendererRange;
     TooltipText ttTxt;
@@ -133,21 +127,26 @@ public class Character : MonoBehaviour
         SetOneBoolAnimTrue("Run");  
     }
 
-    // ATTAQUE EN MELEE : Termine l'attaque 
-    public void EndAttackMelee(int successes)
+    // ATTAQUE EN MELEE : Termine l'attaque (avant anim)
+    void EndAttackMelee1()
     {
         currentTarget.targetedBy = this;
         Destroy(aw.gameObject);
         MainSelector.instance.StopAction(false);
         ChangeCharaAction(0);
         SetOneBoolAnimTrue("Punch");
-        //GetComponentInChildren<ParticleSystem>().Play();
+    }
+
+    // ATTAQUE EN MELEE : Termine l'attaque (après anim)
+    public void EndAttackMelee2()
+    {
         if (GiveDamages(currentTarget, successes))
             StartPositionTaking();
         else
         {
+            SetOneBoolAnimTrue("Run");
             isMovingToSlot = 3;
-            StartCoroutine(EndAction());
+            //StartCoroutine(EndAction());
         }
     }
 
@@ -250,7 +249,7 @@ public class Character : MonoBehaviour
 
         ActionBar.instance.UpdateEnergy(this);
     }
-
+    
 
 
 
@@ -327,7 +326,7 @@ public class Character : MonoBehaviour
         ShowFeedbackAction(0, transform.position, successes);
         if (currentAction == "Melee")
         {
-            EndAttackMelee(successes);
+            EndAttackMelee1();
         }
         else if (currentAction == "Distance")
         {
@@ -359,6 +358,11 @@ public class Character : MonoBehaviour
     // - Son slot d'origine : continue le tour (4)
     public void MoveToSlot(int typeOfMovment)
     {
+        if(typeOfMovment >= 1 && typeOfMovment <= 4)
+        {
+            SetOneBoolAnimTrue("Run");
+        }
+
         if (typeOfMovment == 1) // Aller sur le slot
         {
             if (Vector3.Distance(transform.position, currentSlot.transform.position) <= 1.2f)
