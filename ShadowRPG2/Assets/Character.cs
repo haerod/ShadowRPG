@@ -8,7 +8,6 @@ public class Character : MonoBehaviour
     [Header("Stats")]
 
     public string charaName;
-    [Tooltip("0 = Joueur, 1 = Enemy, -1 = Allié")]
     public int team;
     public int currentEnergy;
     public int maxEnergy;
@@ -24,15 +23,16 @@ public class Character : MonoBehaviour
 
     [Header("Divers")]
 
+    public AudioClip charaTrack;
     public Slot currentSlot;
     [Tooltip("Idle, Move, Melee")]
-    public string currentAction = "Idle";  //Penser à les ajouter dans MainSelector.ChangeCharaAction()
+    public string currentAction = "Idle";
     public Transform aimLowPoz;
     public Transform aimHighPoz;
-    [SerializeField]
-    private float movementSpeed;
+    [SerializeField] float movementSpeed;
     public Sprite charaImage;
 
+    private AnimationEvent shootEvent;
     private AttackWindow aw;
     private Character currentTarget;
     [HideInInspector]
@@ -115,7 +115,7 @@ public class Character : MonoBehaviour
         MainSelector.instance.canClick = true;
         SetAllBoolAnimFalse();
         PozOnSlot();
-        EndAction();
+        StartCoroutine(EndAction());
         //Camera.main.GetComponent<CombatCamera>().BackToFreeMode();
     }
 
@@ -139,15 +139,15 @@ public class Character : MonoBehaviour
         currentTarget.targetedBy = this;
         Destroy(aw.gameObject);
         MainSelector.instance.StopAction(false);
-        MainSelector.instance.ChangeCharaAction(0);
-        SetOneBoolAnimTrue("Shoot");
-        GetComponentInChildren<ParticleSystem>().Play();
+        ChangeCharaAction(0);
+        SetOneBoolAnimTrue("Punch");
+        //GetComponentInChildren<ParticleSystem>().Play();
         if (GiveDamages(currentTarget, successes))
             StartPositionTaking();
         else
         {
             isMovingToSlot = 3;
-            EndAction();
+            StartCoroutine(EndAction());
         }
     }
 
@@ -185,12 +185,10 @@ public class Character : MonoBehaviour
         currentTarget.targetedBy = this;
         Destroy(aw.gameObject);
         MainSelector.instance.StopAction(false);
-        MainSelector.instance.ChangeCharaAction(0);
+        ChangeCharaAction(0);
         SetOneBoolAnimTrue("Shoot");
-        GetComponentInChildren<ParticleSystem>().Play();
         GiveDamages(currentTarget, successes - currentTarget.currentSlot.coverValue);
-        EndAction();
-        //ClearEnergy();
+        StartCoroutine(EndAction());
     }
 
     // RECHARGER L'ENERGIE
@@ -202,16 +200,59 @@ public class Character : MonoBehaviour
         ActionBar.instance.UpdateEnergy(this);
     }
 
+    // PASSER SON TOUR
+    public void PassTurn()
+    {
+        StartCoroutine(EndAction());
+    }
+
+
+
     // TERMINER UNE ACTION
-    void EndAction()
+    IEnumerator EndAction()
     {
         currentSlot.HidePossibilities();
         currentAction = "Idle";
+
+        yield return new WaitForEndOfFrame();
+
+        SetAllBoolAnimFalse();
         ClearSlots();
         successes = 0;
         MainSelector.instance.HideSelectedCharacterFeedback();
         TurnBar.instance.NextCharaTurn();
+
     }
+
+    // Donne la bonne action au chara
+    // Si l'index = 0, tous les bools sont false et le personnage sélectionné Clear ses slots
+    public void ChangeCharaAction(int boolIndex)
+    {
+        switch (boolIndex)
+        {
+            case 0:
+                currentAction = "Idle";
+                ClearSlots();
+                break;
+            case 1:
+                currentAction = "Move";
+                break;
+            case 2:
+                currentAction = "Melee";
+                break;
+            case 3:
+                currentAction = "Distance";
+                break;
+            default:
+                Debug.LogError("Cet index n'existe pas !!! (" + boolIndex + ")");
+                break;
+        }
+
+        ActionBar.instance.UpdateEnergy(this);
+    }
+
+
+
 
 
 
@@ -355,7 +396,7 @@ public class Character : MonoBehaviour
                 SetAllBoolAnimFalse();
                 PozOnSlot();
                 if(typeOfMovment == 3)
-                    EndAction();
+                    StartCoroutine(EndAction());
                 return;
                 //////////////
             }

@@ -85,7 +85,7 @@ public class AttackWindow : MonoBehaviour
         if (chara.currentAction == "Distance")
             chara.HideRangeCircle();
         MainSelector.instance.StopAction();
-        MainSelector.instance.ChangeCharaAction(0);
+        MainSelector.instance.selectedCharacter.ChangeCharaAction(0);
         Destroy(this.gameObject);
     }
 

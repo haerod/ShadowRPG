@@ -133,20 +133,19 @@ public class MainSelector : MonoBehaviour
                 }
 
                 // Enlève l'UI en cliquant dans le vide
-                else if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && selectedCharacter)
-                {
-                    ActionBar.instance.HideActionBar();
-                    selectedCharacter.currentSlot.HidePossibilities();
-                    selectedCharacter.HideRangeCircle();
-                    ChangeCharaAction(0);
-                    selectedCharacter = null;
-                    return;
-                    //////////////
-                }
+                //else if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && selectedCharacter)
+                //{
+                //    ActionBar.instance.HideActionBar();
+                //    selectedCharacter.currentSlot.HidePossibilities();
+                //    selectedCharacter.HideRangeCircle();
+                //    selectedCharacter.ChangeCharaAction(0);
+                //    selectedCharacter = null;
+                //    return;
+                //    //////////////
+                //}
             }
         }
     }
-
 
 
 
@@ -155,7 +154,7 @@ public class MainSelector : MonoBehaviour
     {
         selectedCharacter.ClearSlots();
         selectedCharacter.currentSlot.ShowMovementPossibilities();
-        ChangeCharaAction(1);
+        selectedCharacter.ChangeCharaAction(1);
     }
 
     // Si le joueur clique sur le bouton MELEE
@@ -163,7 +162,7 @@ public class MainSelector : MonoBehaviour
     {
         selectedCharacter.ClearSlots();
         selectedCharacter.currentSlot.ShowMeleePossibilities();
-        ChangeCharaAction(2);
+        selectedCharacter.ChangeCharaAction(2);
     }
 
     // Si le joueur clique sur le bouton DISTANCE
@@ -172,7 +171,7 @@ public class MainSelector : MonoBehaviour
         selectedCharacter.ClearSlots();
         selectedCharacter.currentSlot.ShowDistancePossibilities();
         selectedCharacter.DisplayRangeCircle();
-        ChangeCharaAction(3);
+        selectedCharacter.ChangeCharaAction(3);
     }
 
     // Si le joueur clique sur le bouton RECHARGER ENERGIE
@@ -184,38 +183,12 @@ public class MainSelector : MonoBehaviour
         }
     }
 
-
-
-    // Donne la bonne action au chara
-    // Si l'index = 0, tous les bools sont false et le personnage sélectionné Clear ses slots
-    public void ChangeCharaAction(int boolIndex)
+    // Si le joueur clique sur le bouton PASSER SON TOUR
+    public void ClickOnPassTurn()
     {
-
-        //selectedCharacter.DistibuteEnergy();
-        ActionBar.instance.HideEnergy();
-
-        switch (boolIndex)
-        {
-            case 0:
-                selectedCharacter.currentAction = "Idle";
-                selectedCharacter.ClearSlots();
-                break;
-            case 1:
-                selectedCharacter.currentAction = "Move";
-                break;
-            case 2:
-                selectedCharacter.currentAction = "Melee";
-                break;
-            case 3:
-                selectedCharacter.currentAction = "Distance";
-                break;
-            default:
-                Debug.LogError("Cet index n'existe pas !!! (" + boolIndex + ")");
-                break;
-        }
-
-        ActionBar.instance.UpdateEnergy(selectedCharacter);
+        selectedCharacter.PassTurn();
     }
+
 
     //Arrête l'action lancée et retourne à la barre d'action (optionnel, if true)
     public void StopAction(bool displayActionBar = true)

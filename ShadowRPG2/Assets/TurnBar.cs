@@ -81,6 +81,7 @@ public class TurnBar : MonoBehaviour
         }
 
         charaInitList.Reverse(); // Retourne la liste
+        PlayNewCharaTrack(charaInitList[0]);
         CreateBar();
     }
 
@@ -106,12 +107,15 @@ public class TurnBar : MonoBehaviour
             if (i == 0) // positionne currentCharaSquare
                 currentCharaSquare.position = vecPoz;
         }
+
+        MainSelector.instance.selectedCharacter = charaInitList[0];
+        ActionBar.instance.DisplayActionBar(charaInitList[0], true);
     }
 
     // Met le nouveau perso en haut et le précédent en bas
     public void NextCharaTurn()
     {
-        for (int i = 0; i < turnTileList.Count; i++)
+        for (int i = 0; i < turnTileList.Count; i++) // Inverse les persos
         {
             if (turnTileList[i].index == 0)
             {
@@ -119,10 +123,18 @@ public class TurnBar : MonoBehaviour
                 turnTileList[i].transform.SetSiblingIndex(0); // Lui donne l'index 0 auprès de son parent
             }
             else
-                turnTileList[i].index --;
+                turnTileList[i].index--;
+
+            if(turnTileList[i].index == 0) // Lance la musique du perso et ajourne la task bar
+            {
+                PlayNewCharaTrack(turnTileList[i].chara);
+                ActionBar.instance.DisplayActionBar(turnTileList[i].chara, true);
+            }
 
             turnTileList[i].targetPoz = pozTurnTile[turnTileList[i].index];
         }
+
+
     }
 
     // Enlève une tuile de la barre à un index donné
@@ -165,5 +177,16 @@ public class TurnBar : MonoBehaviour
         }
 
         return null;
+    }
+
+    // Joue la musique du nouveau personnage
+    void PlayNewCharaTrack(Character chara)
+    {
+        AudioSource audioS = Camera.main.transform.GetChild(0).GetComponent<AudioSource>();
+        if(audioS.clip != chara.charaTrack)
+        {
+            audioS.clip = chara.charaTrack;
+            audioS.Play();
+        }
     }
 }

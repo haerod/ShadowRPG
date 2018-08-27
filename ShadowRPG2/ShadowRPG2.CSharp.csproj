@@ -226,7 +226,9 @@
     <Compile Include="Assets\CombatCamera.cs" />
     <Compile Include="Assets\Dealer.cs" />
     <Compile Include="Assets\FadeOutElement.cs" />
+    <Compile Include="Assets\FixedEnergyChara.cs" />
     <Compile Include="Assets\MainSelector.cs" />
+    <Compile Include="Assets\Menu.cs" />
     <Compile Include="Assets\MouseOverHidableObject.cs" />
     <Compile Include="Assets\PositionTakingWindow.cs" />
     <Compile Include="Assets\Simple UI\Samples\IconPreview.cs" />
@@ -238,7 +240,7 @@
     <Compile Include="Assets\TurnTile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Polygon City Free Pack\Materials\Double Sided Standard Diffuse Bump.shader" />
+    <None Include="Assets\Graphs\Polygon City Free Pack\Materials\Double Sided Standard Diffuse Bump.shader" />
     <None Include="Assets\Simple UI\Fonts\OFL.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

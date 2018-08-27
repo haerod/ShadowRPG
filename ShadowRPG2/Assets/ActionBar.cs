@@ -66,14 +66,6 @@ public class ActionBar : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        HideActionBar();
-    }
-
-
-
-
     //Affiche la barre d'actions
     public void DisplayActionBar(Character selectedCharacter, bool displayActions)
     {
@@ -189,22 +181,4 @@ public class ActionBar : MonoBehaviour
         barTransition.position = new Vector2((barProba.position.x + barStage.position.x)/2, barTransition.position.y);
         barTransition.sizeDelta = new Vector2 (widthTransition, barTransition.sizeDelta.y);
     }
-
-
-    /*// (OLD) Instancie les symboles Energie dans l'action bar 
-    public void GenerateEnergy(Character selectedCharacter)
-    {
-        RectTransform prefEnergy = Dealer.instance.energyPref.GetComponent<RectTransform>();
-        int sideOffset = 20;
-        int betweenOffset = 5;
-
-        for (int i = 0; i < selectedCharacter.currentEnergy; i++)
-        {
-            Vector2 pozEnergy = new Vector2(
-                energyBarRt.position.x - (energyBarRt.rect.width / 2) + sideOffset + (prefEnergy.rect.width * i) + (betweenOffset * i),
-                energyBarRt.position.y);
-            RectTransform instaEnergyRt = Instantiate(Dealer.instance.energyPref, pozEnergy, Quaternion.identity, energyBarRt.transform).GetComponent<RectTransform>();
-            energyList.Add(instaEnergyRt);
-        }
-    }*/
 }

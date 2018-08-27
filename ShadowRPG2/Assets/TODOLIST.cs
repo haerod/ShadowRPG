@@ -10,6 +10,8 @@ public class TODOLIST : MonoBehaviour
     public bool TirDetectionEnnemi = false;
     [Tooltip("Le material des bâtiments n'est pas complètement transparent")]
     public bool TransparenceDesBâtimentsMaterial = false;
+    [Tooltip("On peut cliquer sur un slot à travers l'UI du menu, on ne devrait pas")]
+    public bool ClickSlotUI = false;
 
     [Header("Features Générales")]
 

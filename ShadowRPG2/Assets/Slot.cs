@@ -6,13 +6,15 @@ public class Slot : MonoBehaviour
 {
     public Slot[] connectedSlots;
     public int coverValue;
-    [HideInInspector]
-    public Character currentChara;
+    [SerializeField] LayerMask lmIgnoreAim;
 
-     [SerializeField] LayerMask lmIgnoreAim;
+    [HideInInspector] public Character currentChara;
+
+    List<Slot> slots = new List<Slot>(); // Pour ShowPossiblities()
+    List<Slot> dustbin = new List<Slot>(); // Pour ShowPossibilities()
 
 
-	void Start ()
+    void Start ()
     {
         GenerateConnexions();
         GetComponent<TooltipText>().textToDisplay = "<b>Couverture</b> : " + coverValue + "\n\n" + "La couverture d'une position réduit les chances d'être touché à distance.";
@@ -85,87 +87,90 @@ public class Slot : MonoBehaviour
     }
 
     // Change le material des slots où l'attaque à distance est possible
+    // NB : Pour rendre cette fonction plus lisible, elle est une succession de foreach qui éliminent des possibilités au fur et à mesure > C'est pas opti, je sais
     public void ShowDistancePossibilities()
     {
         RaycastHit hit;
-        Slot targetSlot;
-        SpriteRenderer targetSr;
+        //Slot targetSlot;
+        //SpriteRenderer targetSr;
         Vector3 origin = currentChara.aimLowPoz.position;
         Vector3 end;
 
-
+        //1. Crée une list de Slot contenant tous les slots du niveau
         for (int i = 0; i < Dealer.instance.allSlotArray.Length; i++)
         {
-            targetSlot = Dealer.instance.allSlotArray[i];
-            targetSr = targetSlot.GetComponentInChildren<SpriteRenderer>();
-            end = Dealer.instance.SetVectorY(targetSlot.transform.position, currentChara.aimLowPoz.position.y);
+            slots.Add(Dealer.instance.allSlotArray[i]);
+        }
 
-            if (Vector3.Distance(transform.position, targetSlot.transform.position) <= currentChara.range && targetSlot.currentChara != null && targetSlot != this) 
-                // Elimine les slots hors de portée, vides et lui-même
+        GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+        dustbin.Add(this);
+        CleanDustbin();
+
+        //2. Elimine les slots étant trop loin
+        foreach (Slot slot in slots)
+        {
+            if (Vector3.Distance(transform.position, slot.transform.position) >= currentChara.range)
             {
-
-                if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim)) // Raycast les slots
-                {
-                    Debug.DrawLine(hit.transform.position, hit.transform.position + Vector3.up, Color.cyan, Mathf.Infinity);
-                    Debug.DrawLine(origin, end, Color.blue, Mathf.Infinity);
-
-                    if (hit.transform.tag == "Obstacle") // Si c'est un obstacle
-                    {
-                        origin = currentChara.aimHighPoz.position;
-                        end = Dealer.instance.SetVectorY(targetSlot.transform.position, currentChara.aimHighPoz.position.y);
-
-                        if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim)) // Raycast le slot depuis plus haut
-                        {
-                            Debug.DrawLine(origin, end, Color.green, Mathf.Infinity);
-
-                            if (hit.transform.tag == "Character") // Si c'est un personnage
-                            {
-                                if (hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara) // Si c'est le personnage du slot
-                                {
-                                    currentChara.allowedSlots.Add(targetSlot);
-                                    targetSr.color = Dealer.instance.attackableSlot;
-                                }
-                                else
-                                {
-                                    targetSr.color = Dealer.instance.forbiddenSlot;
-                                }
-                            }
-                            else
-                            {
-                                targetSr.color = Dealer.instance.forbiddenSlot;
-                            }
-                        }
-                    }
-                    else if (hit.transform.tag == "Character") // Si c'est un personnage
-                    {
-                        //print(hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara);
-                        //print(hit.transform.GetComponent<Character>().charaName);
-                        if (hit.transform.GetComponent<Character>().currentSlot == targetSlot.currentChara) // Si c'est le personnage du slot
-                        {
-                            currentChara.allowedSlots.Add(targetSlot);
-                            targetSr.color = Dealer.instance.attackableSlot;
-                        }
-                        else
-                        {
-                            targetSr.color = Dealer.instance.forbiddenSlot;
-                        }
-                    }
-                    else
-                    {
-                        targetSr.color = Dealer.instance.forbiddenSlot;
-                    }
-                }
-                else
-                {
-                    currentChara.allowedSlots.Add(targetSlot);
-                    targetSr.color = Dealer.instance.attackableSlot;
-                }
-            }
-            else
-            {
-                targetSr.color = Dealer.instance.forbiddenSlot;
+                slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                dustbin.Add(slot);
             }
         }
+        CleanDustbin();
+
+        //3. Elimine les slots vides
+        foreach (Slot slot in slots)
+        {
+            if(slot.currentChara == null)
+            {
+                slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                dustbin.Add(slot);
+            }
+        }
+        CleanDustbin();
+
+        //4. Elimine les slots avec lesquels, en cas de raycas bas, il y a collision avec un autre personnage
+        foreach (Slot slot in slots)
+        {
+            end = Dealer.instance.SetVectorY(slot.transform.position, currentChara.aimLowPoz.position.y);
+
+            if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim))
+            {
+                if (hit.transform.tag == "Character")
+                {
+                    if(hit.transform.GetComponent<Character>() != slot.currentChara)
+                    {
+                        slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                        dustbin.Add(slot);
+                    }
+                }
+            }
+        }
+        CleanDustbin();
+
+        //5. Elimine les slots avec lesquels, en cas de raycast haut, il y a collision avec un mur
+        foreach (Slot slot in slots)
+        {
+            end = Dealer.instance.SetVectorY(slot.transform.position, currentChara.aimLowPoz.position.y);
+
+            if (Physics.Raycast(origin, (end - origin), out hit, lmIgnoreAim))
+            {
+                if (hit.transform.tag == "Obstacle")
+                {
+                    slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                    dustbin.Add(slot);
+                }
+            }
+        }
+        CleanDustbin();
+
+        //6. Valide les slots restants
+        foreach (Slot slot in slots)
+        {
+            currentChara.allowedSlots.Add(slot);
+            slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.attackableSlot;
+        }
+
+        slots.Clear();
     }
 
     // Rend le material d'origine aux slots où le mouvement est possible
@@ -175,5 +180,24 @@ public class Slot : MonoBehaviour
         {
             Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.neutralSlot;
         }
+    }
+
+
+
+
+
+
+
+
+
+
+    // Elimine les slots à éliminer dans la List slots
+    void CleanDustbin()
+    {
+        foreach (Slot slot in dustbin)
+        {
+            slots.Remove(slot);
+        }
+        dustbin.Clear();
     }
 }

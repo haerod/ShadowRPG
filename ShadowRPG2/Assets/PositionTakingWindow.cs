@@ -6,6 +6,17 @@ public class PositionTakingWindow : MonoBehaviour
 {
     public Character linkedChara;
 
+    void Start()
+    {
+        StartCoroutine(StopPunchAction());
+    }
+
+    IEnumerator StopPunchAction()
+    {
+        yield return new WaitForEndOfFrame();
+        linkedChara.SetAllBoolAnimFalse();
+    }
+
     public void ClickOnTakePosition()
     {
         linkedChara.EndPositionTaking();
