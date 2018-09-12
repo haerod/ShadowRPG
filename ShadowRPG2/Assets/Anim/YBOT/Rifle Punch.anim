@@ -33540,7 +33540,7 @@ AnimationClip:
   m_GenerateMotionCurves: 0
   m_Events:
   - time: 0.75
-    functionName: AnimPunchAttack
+    functionName: AnimAttack
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

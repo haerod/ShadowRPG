@@ -10,23 +10,33 @@ public class TODOLIST : MonoBehaviour
     public bool TirDetectionEnnemi = false;
     [Tooltip("Le material des bâtiments n'est pas complètement transparent")]
     public bool TransparenceDesBâtimentsMaterial = false;
-    [Tooltip("On peut cliquer sur un slot à travers l'UI du menu, on ne devrait pas")]
-    public bool ClickSlotUI = false;
 
     [Header("Features Générales")]
 
-    [Tooltip("Virer l'aspect JDR pour rendre le jeu bitable")]
-    public bool MAJTermes = false;
-    [Tooltip("Le joueur doit comprendre comment fonctionne l'attack window grâce à des tooltips")]
-    public bool TooltipsAttackWindow = false;
-    [Tooltip("Le joueur peut enlever des dés misés dans l'Attack window")]
-    public bool BoutonMoinsAttackWindow = false;
+    [Tooltip("Les armes ont des effets différents en fonction du nombre de réussites du joueur")]
+    public bool EffetsArme;
     [Tooltip("Un personnage peut avoir plusieurs armes")]
     public bool PlusieursArmes = false;
     [Tooltip("Une fonction permet de centrer automatiquement la caméra sur un perso")]
     public bool CentrerCamera = false;
     [Tooltip("Les ennemis ont une IA qui peut se déplacer et se battre")]
     public bool IAEnnemi = false;
+    [Tooltip("Unifier les feedbacks entre : le déplacement, les slots à portée mais interdits sont gris, hors de portée restent bleus et le tir tous les slots non autorisés sont gris.")]
+    public bool UnifierFeedbacks = false;
+    [Tooltip("Les tooltips de l'UI ne fonctionnent plus.")]
+    public bool TooltipsUI = false;
+    [Tooltip("La portée d'attaque à distance et la distance de shoot ne correspondent pas.")]
+    public bool RangeShoot = false;
+    [Tooltip("Lorsque le joueur clique sur un personnage dont ce n'est pas le tour, les boutons EndTurn et Reload Energy doivent être cachés.")]
+    public bool HideEndTurnAndReload = false;
+    [Tooltip("Les feedbacks de dégâts/réussites doivent être intanciés dans le monde plutôt que sur le canvas UI de manière à rester à leur place")]
+    public bool WorldFeedback = false;
+    [Tooltip("Les turnTiles doivent se déplacer au nouvelles positions en cas de changement de tour")]
+    public bool PositionTurnTiles = false;
+    [Tooltip("Les turnTiles doivent se déplacer au nouvelles positions si un personnage est tué")]
+    public bool PositionTurnTilesDeath = false;
+    [Tooltip("Les compétences doivent afficher le % correspondant")]
+    public bool ActionPct = false;
 
     [Header("Features Actions")]
 

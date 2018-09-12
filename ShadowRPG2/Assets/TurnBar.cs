@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class TurnBar : MonoBehaviour
 {
     public int currentInitIndex;
-    public float distBetweenImages;
-    [SerializeField] RectTransform currentCharaSquare;
+    public float distBetweenTiles;
+    public float bigTileDist;
 
+    [HideInInspector] public Character currentChara;
     GameObject prefabTurnTile;
-    RectTransform rt;
-    float size;
+    float sizeTile;
 
     List<TurnTile> turnTileList = new List<TurnTile>();
     List<Vector2> pozTurnTile = new List<Vector2>();
@@ -34,8 +34,7 @@ public class TurnBar : MonoBehaviour
 	void Start ()
     {
         prefabTurnTile = Dealer.instance.charaTurn;
-        rt = GetComponent<RectTransform>();
-        size = prefabTurnTile.GetComponent<RectTransform>().rect.height;
+        sizeTile = prefabTurnTile.GetComponent<RectTransform>().rect.height;
 
         CreateTurnList();
 	}
@@ -81,7 +80,8 @@ public class TurnBar : MonoBehaviour
         }
 
         charaInitList.Reverse(); // Retourne la liste
-        PlayNewCharaTrack(charaInitList[0]);
+        currentChara = charaInitList[0];
+        PlayNewCharaTrack(currentChara);
         CreateBar();
     }
 
@@ -92,27 +92,28 @@ public class TurnBar : MonoBehaviour
 
         for (int i = 0; i < charaInitList.Count; i++)
         {
-            vecPoz = new Vector2(rt.position.x,
-                (rt.position.y + rt.rect.height / 2 - size) // position de base
-                - (size * i) - (distBetweenImages * i)); // position des tuiles entre elles 
-            pozTurnTile.Add(vecPoz);
-            TurnTile instaTurnTile = Instantiate(prefabTurnTile, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
-            turnTileList.Add(instaTurnTile);
-            instaTurnTile.chara = charaInitList[i];
-            instaTurnTile.targetPoz = vecPoz;
-            instaTurnTile.index = i;
-            instaTurnTile.gameObject.name = "TurnTile(" + instaTurnTile.chara.charaName + ")";
-            instaTurnTile.InitTile();
-
-            if (i == 0) // positionne currentCharaSquare
-                currentCharaSquare.position = vecPoz;
+                vecPoz = new Vector2(
+                                    ActionBar.instance.energyBarRt.position.x - ActionBar.instance.energyBarRt.rect.width / 2 + prefabTurnTile.GetComponent<TurnTile>().energyBarRt.rect.width / 2,
+                                    (ActionBar.instance.energyBarRt.position.y + ActionBar.instance.energyBarRt.rect.height / 2 + sizeTile / 2 + distBetweenTiles + bigTileDist) // position de base
+                                    + (sizeTile * i) + (distBetweenTiles * i)); // position des tuiles entre elles 
+                pozTurnTile.Add(vecPoz);
+                TurnTile instaTurnTile = Instantiate(prefabTurnTile, vecPoz, Quaternion.identity, this.transform).GetComponent<TurnTile>();
+                turnTileList.Add(instaTurnTile);
+                instaTurnTile.chara = charaInitList[i];
+                instaTurnTile.targetPoz = vecPoz;
+                instaTurnTile.index = i;
+                instaTurnTile.gameObject.name = "TurnTile(" + instaTurnTile.chara.charaName + ")";
+                instaTurnTile.InitTile();
         }
 
-        MainSelector.instance.selectedCharacter = charaInitList[0];
-        ActionBar.instance.DisplayActionBar(charaInitList[0], true);
+        currentChara = charaInitList[0];
+        ActionBar.instance.DisplayActionBar(currentChara, true);
+        Dealer.instance.faceCamera.transform.parent = currentChara.transform; // Assigne la face cam au nouveau perso
+        Dealer.instance.faceCamera.transform.position = currentChara.faceCamTrans.position;
+        Dealer.instance.faceCamera.transform.rotation = currentChara.faceCamTrans.rotation;
     }
 
-    // Met le nouveau perso en haut et le précédent en bas
+    // Met le nouveau perso en haut et le précédent en bas, puis lance le tour
     public void NextCharaTurn()
     {
         for (int i = 0; i < turnTileList.Count; i++) // Inverse les persos
@@ -120,21 +121,24 @@ public class TurnBar : MonoBehaviour
             if (turnTileList[i].index == 0)
             {
                 turnTileList[i].index = turnTileList.Count - 1;
-                turnTileList[i].transform.SetSiblingIndex(0); // Lui donne l'index 0 auprès de son parent
             }
             else
                 turnTileList[i].index--;
 
-            if(turnTileList[i].index == 0) // Lance la musique du perso et ajourne la task bar
+            if(turnTileList[i].index == 0) 
             {
-                PlayNewCharaTrack(turnTileList[i].chara);
-                ActionBar.instance.DisplayActionBar(turnTileList[i].chara, true);
+                currentChara = turnTileList[i].chara;
             }
 
-            turnTileList[i].targetPoz = pozTurnTile[turnTileList[i].index];
+            //turnTileList[i].targetPoz = pozTurnTile[turnTileList[i].index];
         }
 
-
+        PlayNewCharaTrack(currentChara);  // Lance la musique du perso
+        ActionBar.instance.DisplayActionBar(currentChara, true); // Ajourne l'action bar
+        MainSelector.instance.DisplaySelectedPlayerFeedback(currentChara); // Met le feedback sur le nouveau perso.
+        Dealer.instance.faceCamera.transform.parent = currentChara.transform; // Assigne la face cam au nouveau perso
+        Dealer.instance.faceCamera.transform.position = currentChara.faceCamTrans.position; 
+        Dealer.instance.faceCamera.transform.rotation = currentChara.faceCamTrans.rotation;
     }
 
     // Enlève une tuile de la barre à un index donné

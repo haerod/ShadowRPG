@@ -13,11 +13,16 @@ public class Slot : MonoBehaviour
     List<Slot> slots = new List<Slot>(); // Pour ShowPossiblities()
     List<Slot> dustbin = new List<Slot>(); // Pour ShowPossibilities()
 
+    SpriteRenderer sr;
+    Animator anim;
 
     void Start ()
     {
+        sr = GetComponentInChildren<SpriteRenderer>();
+        sr.color = Dealer.instance.neutralSlot;
         GenerateConnexions();
         GetComponent<TooltipText>().textToDisplay = "<b>Couverture</b> : " + coverValue + "\n\n" + "La couverture d'une position réduit les chances d'être touché à distance.";
+        anim = GetComponentInChildren<Animator>();
     }
 
     // Crée des objets vides avec des Line renders pour créer des connexions
@@ -60,11 +65,73 @@ public class Slot : MonoBehaviour
             if(connectedSlots[i].currentChara == null)
             {
                 currentChara.allowedSlots.Add(connectedSlots[i]);
-                connectedSlots[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.freeSlot;
+                connectedSlots[i].sr.color = Dealer.instance.freeSlot;
             }
             else
             {
-                connectedSlots[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                connectedSlots[i].sr.color = Dealer.instance.forbiddenSlot;
+            }
+        }
+    }
+
+    // Retourne true si le slot à tester est adjacent au slot faisant le test
+    public bool IsNearby(Slot SlotToTest)
+    {
+        for (int i = 0; i < connectedSlots.Length; i++)
+        {
+            if (connectedSlots[i] == SlotToTest)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Change les materials des slots où la course est possible, en fonction du nombre de PE disponibles 
+    // FONCTIONNEMENT : La fonction a deux listes de Slot : tockeckList qui contient tous les slots où vérifier les slots connectés pour s'étendre, et la stockList, qui contient les futurs slots à checker (ceux qui ont été nouvellement ajoutés).
+    public void ShowRunPossibilities()
+    {
+        List<Slot> tocheckList = new List<Slot>();
+        List<Slot> stockList = new List<Slot>();
+        Slot curSlot;
+
+        tocheckList.Add(this);
+
+        for(int i = 0; i < currentChara.currentEnergy; i++ ) // Pour chaque PE du chara
+        {
+
+
+            if (i != 0) // Attibue tous les éléments de la stocklist à la tocheckList
+            {
+                tocheckList.Clear();
+                for (int l = 0; l < stockList.Count; l++)
+                {
+                    tocheckList.Add(stockList[l]);
+                }
+                stockList.Clear();
+            }
+
+            for (int j = 0; j < tocheckList.Count; j++) // Pour chaque élément de la tocheckList, vérifier les slots adjacents
+            {
+
+                for (int k = 0; k < tocheckList[j].connectedSlots.Length; k++) 
+                    // Pour chaque slot connecté, vérifier s'il est à disponible et n'existe pas déjà dans allowedSlot
+                {
+                    curSlot = tocheckList[j].connectedSlots[k];
+                    if (curSlot.currentChara == null)
+                    {
+                        if (!currentChara.allowedSlots.Contains(curSlot))
+                        {
+                            stockList.Add(curSlot);
+                            currentChara.allowedSlots.Add(curSlot);
+                            curSlot.sr.color = Dealer.instance.freeSlot;
+                        }
+                    }
+                    else
+                    {
+                        curSlot.sr.color = Dealer.instance.forbiddenSlot;
+                    }
+                }
             }
         }
     }
@@ -77,17 +144,17 @@ public class Slot : MonoBehaviour
             if (connectedSlots[i].currentChara != null)
             {
                 currentChara.allowedSlots.Add(connectedSlots[i]);
-                connectedSlots[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.attackableSlot;
+                connectedSlots[i].sr.color = Dealer.instance.attackableSlot;
             }
             else
             {
-                connectedSlots[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                connectedSlots[i].sr.color = Dealer.instance.forbiddenSlot;
             }
         }
     }
 
     // Change le material des slots où l'attaque à distance est possible
-    // NB : Pour rendre cette fonction plus lisible, elle est une succession de foreach qui éliminent des possibilités au fur et à mesure > C'est pas opti, je sais
+    // NB : Pour rendre cette fonction plus lisible, elle est une succession de foreach qui éliminent des possibilités au fur et à mesure -> C'est pas opti, je sais
     public void ShowDistancePossibilities()
     {
         RaycastHit hit;
@@ -102,7 +169,7 @@ public class Slot : MonoBehaviour
             slots.Add(Dealer.instance.allSlotArray[i]);
         }
 
-        GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+        sr.color = Dealer.instance.forbiddenSlot;
         dustbin.Add(this);
         CleanDustbin();
 
@@ -111,7 +178,7 @@ public class Slot : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, slot.transform.position) >= currentChara.range)
             {
-                slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                //slot.sr.color = Dealer.instance.forbiddenSlot;
                 dustbin.Add(slot);
             }
         }
@@ -122,13 +189,13 @@ public class Slot : MonoBehaviour
         {
             if(slot.currentChara == null)
             {
-                slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                slot.sr.color = Dealer.instance.forbiddenSlot;
                 dustbin.Add(slot);
             }
         }
         CleanDustbin();
 
-        //4. Elimine les slots avec lesquels, en cas de raycas bas, il y a collision avec un autre personnage
+        //4. Elimine les slots avec lesquels, en cas de raycast bas, il y a collision avec un autre personnage
         foreach (Slot slot in slots)
         {
             end = Dealer.instance.SetVectorY(slot.transform.position, currentChara.aimLowPoz.position.y);
@@ -139,7 +206,7 @@ public class Slot : MonoBehaviour
                 {
                     if(hit.transform.GetComponent<Character>() != slot.currentChara)
                     {
-                        slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                        slot.sr.color = Dealer.instance.forbiddenSlot;
                         dustbin.Add(slot);
                     }
                 }
@@ -156,7 +223,7 @@ public class Slot : MonoBehaviour
             {
                 if (hit.transform.tag == "Obstacle")
                 {
-                    slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.forbiddenSlot;
+                    slot.sr.color = Dealer.instance.forbiddenSlot;
                     dustbin.Add(slot);
                 }
             }
@@ -167,27 +234,30 @@ public class Slot : MonoBehaviour
         foreach (Slot slot in slots)
         {
             currentChara.allowedSlots.Add(slot);
-            slot.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.attackableSlot;
+            slot.sr.color = Dealer.instance.attackableSlot;
         }
 
         slots.Clear();
     }
 
-    // Rend le material d'origine aux slots où le mouvement est possible
+    // Rend le material d'origine à tous les slots
     public void HidePossibilities()
     {
         for (int i = 0; i < Dealer.instance.allSlotArray.Length; i++)
         {
-            Dealer.instance.allSlotArray[i].gameObject.GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.neutralSlot;
+            Dealer.instance.allSlotArray[i].sr.color = Dealer.instance.neutralSlot;
         }
     }
 
+    void OnMouseOver()
+    {
+        anim.SetBool("Loop", true);
+    }
 
-
-
-
-
-
+    void OnMouseExit()
+    {
+        anim.SetBool("Loop", false);
+    }
 
 
 

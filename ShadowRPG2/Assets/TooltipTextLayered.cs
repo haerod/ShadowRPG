@@ -7,6 +7,12 @@ public class TooltipTextLayered : MonoBehaviour
 {
     private RectTransform tooltip;
     private int layerToIgnore = ~(1 << 8); // Layer du décor
+    CombatCamera cam;
+
+    void Awake()
+    {
+        cam = GetComponent<CombatCamera>();
+    }
 
     void Start()
     {
@@ -15,17 +21,16 @@ public class TooltipTextLayered : MonoBehaviour
 
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
+        if (!cam.isCinematicMode)
         {
-            if (hit.transform.GetComponent<TooltipText>() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
             {
-                DisplayTooltip(hit.transform.GetComponent<TooltipText>().textToDisplay, Camera.main.WorldToScreenPoint(hit.transform.position));
-            }
-            else if(!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-            {
-                HideTooltip();
+                if (hit.transform.GetComponent<TooltipText>() && !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                    DisplayTooltip(hit.transform.GetComponent<TooltipText>().textToDisplay, Camera.main.WorldToScreenPoint(hit.transform.position));
+                else if(!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                    HideTooltip();
             }
         }
     }

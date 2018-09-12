@@ -4,33 +4,23 @@ using UnityEngine;
 
 public class CombatCamera : MonoBehaviour
 {
-    public bool isFreeMode = true;
+    public bool canMove = true;
 
     [Header ("Free Mode")]
 
-    [SerializeField]
-    private float maxY;
-    [SerializeField]
-    private float minY;
+    [SerializeField] float maxY;
+    [SerializeField] float minY;
 
-    [SerializeField]
-    private float camYModifier;
-    [SerializeField]
-    private float camYspeed;
+    [SerializeField] float camYModifier;
+    [SerializeField] float camYspeed;
 
-    [SerializeField]
-    private float maxX;
-    [SerializeField]
-    private float minX;
-    [SerializeField]
-    private float maxZ;
-    [SerializeField]
-    private float minZ;
+    [SerializeField] float maxX;
+    [SerializeField] float minX;
+    [SerializeField] float maxZ;
+    [SerializeField] float minZ;
 
-    [SerializeField]
-    private float camXZModifier;
-    [SerializeField]
-    private float camXZspeed;
+    [SerializeField] float camXZModifier;
+    [SerializeField] float camXZspeed;
 
     private Vector3 newCamPoz;
     private float newX;
@@ -39,12 +29,8 @@ public class CombatCamera : MonoBehaviour
 
     [Header("Camera sur les bords")]
 
-    [SerializeField]
-    private float xScreenBorder;
-    [SerializeField]
-    private float yScreenBorder;
-    [HideInInspector]
-    public bool isActionBarOpened;
+    [SerializeField] float xScreenBorder;
+    [SerializeField] float yScreenBorder;
 
     [Header("Free rotation mode")]
 
@@ -55,17 +41,10 @@ public class CombatCamera : MonoBehaviour
     [Header("Zoom Mode")]
 
     public List<Transform> targetList;
-    [SerializeField]
-    private float zoomZOffset;
-    [SerializeField]
-    [Range(0f,0.2f)]
-    private float camZoomSpeed;
-    [SerializeField]
-    private float zoomDistMin;
-    [SerializeField]
-    private float zoomDistMax;
-
-    [Space]
+    [SerializeField] float zoomZOffset;
+    [SerializeField][Range(0f,0.2f)] float camZoomSpeed;
+    [SerializeField] float zoomDistMin;
+    [SerializeField] float zoomDistMax;
 
     //[SerializeField]
     //private Transform leftPoint;
@@ -78,6 +57,9 @@ public class CombatCamera : MonoBehaviour
     private float pctDistance;
     private RaycastHit hit;
     private MouseOverHidableObject previousObj;
+    [HideInInspector] public Vector3 lastPoz;
+    [HideInInspector] public Quaternion lastRot;
+    [HideInInspector] public bool isCinematicMode;
 
     bool isCenter;
 
@@ -91,17 +73,21 @@ public class CombatCamera : MonoBehaviour
 	
 	void Update ()
     {
-        HideForwardBuildings();
+        if(!isCinematicMode)
+            HideForwardBuildings();
 
-        if (Input.GetKey(KeyCode.Space))
-            isCenter = true;
-        else
-            isCenter = false;
-        
-        if (isCenter)
-            CenterOnCharacter();
-        else
-            FreeMode();
+        if (canMove)
+        {
+            if (Input.GetKey(KeyCode.Space))
+                isCenter = true;
+            else
+                isCenter = false;
+
+            if (isCenter)
+                CenterOnCharacter();
+            else
+                FreeMode();
+        }
     }
 
 
@@ -125,7 +111,7 @@ public class CombatCamera : MonoBehaviour
         {
             newX = Mathf.Clamp(transform.position.x + (camXZModifier), minX, maxX);
         }
-        else if (Input.GetKey(KeyCode.LeftArrow) || (xMouse < xScreenBorder && !isActionBarOpened)) // GAUCHE
+        else if (Input.GetKey(KeyCode.LeftArrow) || xMouse < xScreenBorder) // GAUCHE
         {
             newX = Mathf.Clamp(transform.position.x + (camXZModifier * -1), minX, maxX);
         }
@@ -240,6 +226,26 @@ public class CombatCamera : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, poz, 0.1f);
     }
 
+    // Passe la caméra en cinematic mode
+    public void StartCinematicMode(Transform newTransform)
+    {
+        canMove = false;
+        lastPoz = transform.position;
+        lastRot = transform.rotation;
+        transform.position = newTransform.position;
+        transform.rotation = newTransform.rotation;
+        isCinematicMode = true;
+        Dealer.instance.tooltipUI.gameObject.SetActive(false);
+    }
+
+    // Ramène la caméra en mode normal
+    public void StopCinematicMode()
+    {
+        transform.position = lastPoz;
+        transform.rotation = lastRot;
+        canMove = true;
+        isCinematicMode = false;
+    }
 
     // Mode zoom (commenté)
     /*

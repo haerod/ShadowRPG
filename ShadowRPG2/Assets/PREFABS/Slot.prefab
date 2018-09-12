@@ -38,6 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4368745846561880}
   - component: {fileID: 212290327664829028}
+  - component: {fileID: 95173341992485366}
   m_Layer: 9
   m_Name: circle
   m_TagString: Untagged
@@ -65,13 +66,30 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1079233636022572}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.784, y: -0.259, z: -6.89}
+  m_LocalPosition: {x: 10.27, y: -0.259, z: -13.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4368745846561880}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &95173341992485366
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1452118518675620}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 07c4244618a7bb343a9dfb17fbcbb7d6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114295582272082996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -85,10 +103,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedSlots: []
   coverValue: 0
-  currentChara: {fileID: 0}
   lmIgnoreAim:
     serializedVersion: 2
     m_Bits: 512
+  currentChara: {fileID: 0}
 --- !u!114 &114312970016721928
 MonoBehaviour:
   m_ObjectHideFlags: 1

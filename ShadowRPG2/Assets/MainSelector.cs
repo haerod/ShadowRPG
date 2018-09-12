@@ -9,10 +9,11 @@ public class MainSelector : MonoBehaviour
 
     [HideInInspector]
     public static MainSelector instance;
-    [HideInInspector]
-    public Character selectedCharacter; // Personnage sur lequel on a cliqué
+    //[HideInInspector]
+    //public Character selectedCharacter; // Personnage sur lequel on a cliqué
 
-    private bool isActionStarted;
+    [HideInInspector]
+    public bool isActionStarted;
     private int layerToIgnore = ~(1 << 8); // Layer du décor
 
 
@@ -20,12 +21,11 @@ public class MainSelector : MonoBehaviour
     {
         if (!instance)
             instance = this;
-
     }
 
     void Update()
     {
-        if(canClick)
+        if (canClick)
         {
             CheckClick();
         }
@@ -38,172 +38,162 @@ public class MainSelector : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !isActionStarted)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
+            //if (!IsMouseOverBars())
             {
-                //Clique sur un perso
-                if (hit.transform.GetComponent<Character>() && (selectedCharacter == null || selectedCharacter.currentAction == "Idle"))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
                 {
-                    Character perso = hit.transform.GetComponent<Character>();
-                    // PJ et en vie
-                    if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+                    // Sélectionne un personnage si aucune action n'est en cours
+                    if (TurnBar.instance.currentChara.currentAction == Character.Action.Idle)
                     {
-                        ActionBar.instance.HideActionBar();
-                        selectedCharacter = perso;
-                        ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.GetCurrentCharacter());
-                        return;
+                        ClickOnCharaWithoutAction(hit);
+                    }
+
+                    // Sélectionne un personnage ou un slot pour y appliquer une action
+                    else
+                    {
+                        ClickOnCharaWithAction(hit);
                     }
                 }
-                //(IDEM) Clique sur le slot d'un perso
-                else if (hit.transform.tag == "Slot" && (selectedCharacter == null || selectedCharacter.currentAction == "Idle"))
+            }
+        }
+        
+        else if (Input.GetMouseButtonDown(1) && !isActionStarted)  // DEPLACEMENT AUTO
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 1000, layerToIgnore))
+            {
+                // Sélectionne un personnage si aucune action n'est en cours
+                if (TurnBar.instance.currentChara.currentAction == Character.Action.Idle)
                 {
-                    if (hit.transform.GetComponent<Slot>().currentChara != null)
+                    if (hit.transform.GetComponent<Slot>())
                     {
-                        Character perso = hit.transform.GetComponent<Slot>().currentChara;
-                        // PJ et en vie
-                        if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+                        Slot newSlot = hit.transform.GetComponent<Slot>();
+                        if(newSlot.currentChara == null)
                         {
-                            ActionBar.instance.HideActionBar();
-                            selectedCharacter = perso;
-                            ActionBar.instance.DisplayActionBar(selectedCharacter, perso == TurnBar.instance.GetCurrentCharacter());
-                            return;
+                            TurnBar.instance.currentChara.AutoMove(newSlot);
                         }
                     }
                 }
-
-                // ACTIONS
-                // =======
-                // Sélectionne le bon slot s'il fait partie des possibilités d'action du joueur
-                else if ((hit.transform.GetComponent<Slot>() || hit.transform.GetComponent<Character>()) && selectedCharacter.currentAction != "Idle")
-                {
-
-                    Slot tempSlot = null;
-                    if (hit.transform.GetComponent<Slot>())
-                    {
-                        if (selectedCharacter.allowedSlots.Contains(hit.transform.GetComponent<Slot>()))
-                            tempSlot = hit.transform.GetComponent<Slot>();
-                    }
-                    else if (hit.transform.GetComponent<Character>())
-                    {
-                        if (selectedCharacter.allowedSlots.Contains(hit.transform.GetComponent<Character>().currentSlot))
-                            tempSlot = hit.transform.GetComponent<Character>().currentSlot;
-                    }
-
-                    // Sécurité, empêche de lancer la suite si le tempslot est null (le slot ou perso cliqué ne correspondait pas à l'action voulue)
-                    if (tempSlot == null)
-                    {
-                        return;
-                        //////////////
-                    }
-
-                    // Lance MOUVEMENT
-                    if (selectedCharacter.currentAction == "Move")
-                    {
-                        selectedCharacter.StartMoveCharacter(tempSlot);
-                        ActionBar.instance.HideActionBar();
-                        DisplaySelectedPlayerFeedback(selectedCharacter);
-                        ActionBar.instance.UpdateCoverValue(selectedCharacter);
-                        canClick = false;
-                        return;
-                        //////////////
-                    }
-                    // Lance MELEE
-                    if (selectedCharacter.currentAction == "Melee")
-                    {
-                        selectedCharacter.StartAttackMelee(tempSlot.currentChara);
-                        /*CombatCamera cc = Camera.main.GetComponent<CombatCamera>();
-                        cc.targetList.Add(selectedCharacter.transform);
-                        cc.targetList.Add(tempSlot.currentChara.transform);
-                        cc.isFreeMode = false;*/
-                        ActionBar.instance.HideActionBar();
-                        isActionStarted = true;
-                        return;
-                        //////////////
-                    }
-
-                    if (selectedCharacter.currentAction == "Distance")
-                    {
-                        selectedCharacter.StartAttackDistance(tempSlot.currentChara);
-                        ActionBar.instance.HideActionBar();
-                        isActionStarted = true;
-                        return;
-                        //////////////
-                    }
-                }
-
-                // Enlève l'UI en cliquant dans le vide
-                //else if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject() && selectedCharacter)
-                //{
-                //    ActionBar.instance.HideActionBar();
-                //    selectedCharacter.currentSlot.HidePossibilities();
-                //    selectedCharacter.HideRangeCircle();
-                //    selectedCharacter.ChangeCharaAction(0);
-                //    selectedCharacter = null;
-                //    return;
-                //    //////////////
-                //}
             }
         }
     }
 
-
-
-    // Si le joueur clique sur le bouton MOUVEMENT
-    public void ClickOnMovement()
+    // CLIC SUR PERSONNAGE (pour afficher dans l'action bar)
+    void ClickOnCharaWithoutAction(RaycastHit castHit)
     {
-        selectedCharacter.ClearSlots();
-        selectedCharacter.currentSlot.ShowMovementPossibilities();
-        selectedCharacter.ChangeCharaAction(1);
-    }
-
-    // Si le joueur clique sur le bouton MELEE
-    public void ClickOnMelee()
-    {
-        selectedCharacter.ClearSlots();
-        selectedCharacter.currentSlot.ShowMeleePossibilities();
-        selectedCharacter.ChangeCharaAction(2);
-    }
-
-    // Si le joueur clique sur le bouton DISTANCE
-    public void ClickOnDistance()
-    {
-        selectedCharacter.ClearSlots();
-        selectedCharacter.currentSlot.ShowDistancePossibilities();
-        selectedCharacter.DisplayRangeCircle();
-        selectedCharacter.ChangeCharaAction(3);
-    }
-
-    // Si le joueur clique sur le bouton RECHARGER ENERGIE
-    public void ClickOnReloadState()
-    {
-        if(selectedCharacter.currentLife > 1)
+        //Clique sur un perso
+        if (castHit.transform.tag == "Character")
         {
-            selectedCharacter.ReloadEnergy();
+            Character perso = castHit.transform.GetComponent<Character>();
+            // PJ et en vie
+            if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+            {
+                ActionBar.instance.DisplayActionBar(perso, perso == TurnBar.instance.currentChara);
+                return;
+            }
+        }
+        //(IDEM) Clique sur le slot d'un perso
+        else if (castHit.transform.tag == "Slot")
+        {
+            if (castHit.transform.GetComponent<Slot>().currentChara != null)
+            {
+                Character perso = castHit.transform.GetComponent<Slot>().currentChara;
+                // PJ et en vie
+                if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+                {
+                    ActionBar.instance.DisplayActionBar(perso, perso == TurnBar.instance.currentChara);
+                    return;
+                }
+            }
         }
     }
 
-    // Si le joueur clique sur le bouton PASSER SON TOUR
-    public void ClickOnPassTurn()
+    // CLIC SUR UN SLOT (pour lancer une action dessus)
+    void ClickOnCharaWithAction(RaycastHit castHit)
     {
-        selectedCharacter.PassTurn();
+        if ((castHit.transform.GetComponent<Slot>() || castHit.transform.GetComponent<Character>()))
+        {
+            Slot tempSlot = null;
+            if (castHit.transform.GetComponent<Slot>()) // Si c'est un slot
+            {
+                if (TurnBar.instance.currentChara.allowedSlots.Contains(castHit.transform.GetComponent<Slot>())) // S'il est autorisé par l'action
+                    tempSlot = castHit.transform.GetComponent<Slot>();
+            }
+            else if (castHit.transform.GetComponent<Character>()) // Si c'est un chara
+            {
+                if (TurnBar.instance.currentChara.allowedSlots.Contains(castHit.transform.GetComponent<Character>().currentSlot)) // Si son slot est autorisé par l'action
+                    tempSlot = castHit.transform.GetComponent<Character>().currentSlot;
+            }
+
+            // Sécurité, empêche de lancer la suite si le tempslot est null (le slot ou perso cliqué ne correspondait pas à l'action voulue)
+            if (tempSlot == null)
+            {
+                return;
+                //////////////
+            }
+
+            // Lance MOUVEMENT
+            if (TurnBar.instance.currentChara.currentAction == Character.Action.Move)
+            {
+                TurnBar.instance.currentChara.StartMoveCharacter(tempSlot);
+                ActionBar.instance.HideActionBar();
+                DisplaySelectedPlayerFeedback(TurnBar.instance.currentChara);
+                ActionBar.instance.UpdateCoverValue(TurnBar.instance.currentChara);
+                canClick = false;
+                return;
+                //////////////
+            }
+
+            // Lance MELEE
+            if (TurnBar.instance.currentChara.currentAction == Character.Action.Melee)
+            {
+                TurnBar.instance.currentChara.StartAttackMelee(tempSlot.currentChara);
+                ActionBar.instance.HideActionBar();
+                isActionStarted = true;
+                return;
+                //////////////
+            }
+
+            // Lance DISTANCE
+            if (TurnBar.instance.currentChara.currentAction == Character.Action.Distance)
+            {
+                TurnBar.instance.currentChara.StartAttackDistance(tempSlot.currentChara);
+                ActionBar.instance.HideActionBar();
+                isActionStarted = true;
+                return;
+                //////////////
+            }
+        }
+
+        // Retourne à l'action bar
+        else
+        {
+            InterruptAction();
+            return;
+            //////////////
+        }
     }
 
-
-    //Arrête l'action lancée et retourne à la barre d'action (optionnel, if true)
-    public void StopAction(bool displayActionBar = true)
+    // Coupe l'action pour retoruner à l'action bar
+    void InterruptAction()
     {
+        TurnBar.instance.currentChara.currentSlot.HidePossibilities();
+        TurnBar.instance.currentChara.HideRangeCircle();
+        TurnBar.instance.currentChara.ChangeCharaAction(Character.Action.Idle);
         isActionStarted = false;
-        if(displayActionBar)
-            ActionBar.instance.DisplayActionBar(selectedCharacter, true);
     }
 
 
 
     // Fait apparaitre le feedback montrant quel PJ a été sélectionné
-    public void DisplaySelectedPlayerFeedback(Character selectedCharacter)
+    public void DisplaySelectedPlayerFeedback(Character chara)
     {
-        Dealer.instance.selectedCharaFeedback.position = selectedCharacter.currentSlot.transform.position;
+        Dealer.instance.selectedCharaFeedback.position = chara.currentSlot.transform.position;
         Dealer.instance.selectedCharaFeedback.gameObject.SetActive(true);
     }
 
@@ -212,4 +202,18 @@ public class MainSelector : MonoBehaviour
     {
         Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
     }
+
+
+    // Vérifie si la souris est au-dessus des barres d'UI (action bar et turn bar)
+    /*public bool IsMouseOverBars()
+    {
+        RectTransform rtActionBar = ActionBar.instance.GetComponent<RectTransform>();
+        RectTransform rtTurnBar = TurnBar.instance.GetComponent<RectTransform>();
+
+        if (Input.mousePosition.y < rtActionBar.rect.height || Input.mousePosition.y > (Screen.height - rtTurnBar.rect.height))
+            return true;
+
+        return false;
+    }*/
 }
+

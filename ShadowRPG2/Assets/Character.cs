@@ -14,26 +14,33 @@ public class Character : MonoBehaviour
     [HideInInspector]
     public int stockedEnergy;
     public int currentLife;
+    public int maxLife;
     public int armor;
     public float range;
     public int init;
-    public int[] percentByLife;
-
+    
     private int successes;
+
+    [Header("Skills")]
+
+    public int skillDistance;
+    public int skillMelee;
 
     [Header("Divers")]
 
     public AudioClip charaTrack;
     public Slot currentSlot;
-    [Tooltip("Idle, Move, Melee")]
-    public string currentAction = "Idle";
+    public enum Action { Melee, Distance, /* INSEREZ PROCHAINE ACTION ICI */ Idle, Move, Run};
     public Transform aimLowPoz;
     public Transform aimHighPoz;
     [SerializeField] float movementSpeed;
     public Sprite charaImage;
+    public Transform faceCamTrans;
+    public Transform leftShoulderCamTrans;
 
-
-    private AttackWindow aw;
+    private ActionWindow aw;
+    private Counter counter;
+    /*[HideInInspector]*/ public Action currentAction;
     [HideInInspector] public Character currentTarget;
     [HideInInspector] public Animator anim;
     [HideInInspector] public int isMovingToSlot;
@@ -41,6 +48,7 @@ public class Character : MonoBehaviour
     [HideInInspector] public List<Slot> allowedSlots;
     [HideInInspector] public Character targetedBy;
     [HideInInspector] public TurnTile turnTile;
+    [HideInInspector] public CharaLinkAnim linkAnim;
 
     CircleLineRenderer lineRendererRange;
     TooltipText ttTxt;
@@ -51,6 +59,9 @@ public class Character : MonoBehaviour
         lineRendererRange = GetComponentInChildren<CircleLineRenderer>();
         ttTxt = gameObject.AddComponent<TooltipText>();
         ttTxt.textToDisplay = charaName;
+        faceCamTrans = transform.GetChild(0).transform;
+        currentAction = Action.Idle;
+        linkAnim = GetComponentInChildren<CharaLinkAnim>();
     }
 
     void Start()
@@ -92,7 +103,27 @@ public class Character : MonoBehaviour
     }
 
 
+    // Lance le mouvement automatique
+    public void AutoMove(Slot newSlot)
+    {
+        currentAction = Action.Move;
 
+        if(currentSlot.IsNearby(newSlot)) // Si le slot est adjacent
+        {
+            SetOneBoolAnimTrue("Run");
+            isMovingToSlot = 1;
+            currentSlot.currentChara = null;
+            currentSlot = newSlot;
+
+            MainSelector.instance.DisplaySelectedPlayerFeedback(this);
+            ActionBar.instance.UpdateCoverValue(this);
+            MainSelector.instance.canClick = false;
+        }
+        else // Si le slot est éloigné (là où il faudra mettre le pathfinding)
+        {
+            currentAction = Action.Idle;
+        }
+    }
 
     //MOUVEMENT : Lance le personnage
     public void StartMoveCharacter(Slot newSlot)
@@ -118,13 +149,15 @@ public class Character : MonoBehaviour
     {
         currentTarget = enemy;
         Dealer.instance.LookAtYAxis(transform, currentTarget.transform.position);
-        aw = Instantiate(Dealer.instance.attackWindow, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<AttackWindow>();
+        aw = Instantiate(Dealer.instance.attackWindow, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<ActionWindow>();
         aw.GetComponent<RectTransform>().anchoredPosition = Dealer.instance.attackWindow.GetComponent<RectTransform>().anchoredPosition;
         aw.chara = this;
         aw.ConstructBar();
 
         isMovingToSlot = 2;
-        SetOneBoolAnimTrue("Run");  
+        SetOneBoolAnimTrue("Run");
+        Camera.main.GetComponent<CombatCamera>().StartCinematicMode(leftShoulderCamTrans);
+        currentSlot.HidePossibilities();
     }
 
     // ATTAQUE EN MELEE : Termine l'attaque (avant anim)
@@ -132,7 +165,7 @@ public class Character : MonoBehaviour
     {
         currentTarget.targetedBy = this;
         Destroy(aw.gameObject);
-        MainSelector.instance.StopAction(false);
+        //MainSelector.instance.StopAction(false);
         ChangeCharaAction(0);
         SetOneBoolAnimTrue("Punch");
     }
@@ -170,23 +203,58 @@ public class Character : MonoBehaviour
     {
         currentTarget = enemy;
         Dealer.instance.LookAtYAxis(transform, currentTarget.transform.position);
-        aw = Instantiate(Dealer.instance.attackWindow, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<AttackWindow>();
+        aw = Instantiate(Dealer.instance.attackWindow, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<ActionWindow>();
         aw.GetComponent<RectTransform>().anchoredPosition = Dealer.instance.attackWindow.GetComponent<RectTransform>().anchoredPosition;
         aw.chara = this;
-        aw.attackName = "Attaque à distance";
+        aw.actionName = "Attaque à distance";
         aw.ConstructBar();
+        Camera.main.GetComponent<CombatCamera>().StartCinematicMode(leftShoulderCamTrans);
+        currentSlot.HidePossibilities();
+        HideRangeCircle();
     }
 
     // ATTAQUE A DISTANCE : Exécute l'attaque
-    public void EndAttackDistance(int successes)
+    public void EndAttackDistance()
     {
         HideRangeCircle();
         currentTarget.targetedBy = this;
         Destroy(aw.gameObject);
-        MainSelector.instance.StopAction(false);
+        //MainSelector.instance.StopAction(false);
         ChangeCharaAction(0);
         SetOneBoolAnimTrue("Shoot");
         GiveDamages(currentTarget, successes - currentTarget.currentSlot.coverValue);
+        StartCoroutine(EndAction());
+    }
+
+    // COURSE : CREE LA FENETRE
+    public void StartRun()
+    {
+        aw = Instantiate(Dealer.instance.attackWindow, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<ActionWindow>();
+        aw.GetComponent<RectTransform>().anchoredPosition = Dealer.instance.attackWindow.GetComponent<RectTransform>().anchoredPosition;
+        aw.chara = this;
+        aw.actionName = "Course";
+        aw.ConstructBar();
+    }
+
+    // COURSE : CREE LE COMPTEUR
+    void ApplyRun()
+    {
+        Destroy(aw.gameObject);
+
+        if(successes <= 0)
+            EndRun();
+        else
+        {
+            counter = Instantiate(Dealer.instance.counter, Vector3.zero, Quaternion.identity, Dealer.instance.mainCanvas).GetComponent<Counter>();
+            counter.GetComponent<RectTransform>().anchoredPosition = Dealer.instance.counter.GetComponent<RectTransform>().anchoredPosition;
+            counter.chara = this;
+            counter.count = successes;
+            counter.CreateCounter(Dealer.instance.symbolRun, "Nombre de <b>positions</b> où votre personnage peut encore se déplacer.");
+        }
+    }
+
+    public void EndRun()
+    {
         StartCoroutine(EndAction());
     }
 
@@ -195,7 +263,7 @@ public class Character : MonoBehaviour
     {
         currentLife--;
         currentEnergy = maxEnergy;
-        ActionBar.instance.UpdateStage(this);
+        ActionBar.instance.UpdateHealth(this);
         ActionBar.instance.UpdateEnergy(this);
     }
 
@@ -211,7 +279,7 @@ public class Character : MonoBehaviour
     IEnumerator EndAction()
     {
         currentSlot.HidePossibilities();
-        currentAction = "Idle";
+        currentAction = Action.Idle;
 
         yield return new WaitForEndOfFrame();
 
@@ -219,39 +287,28 @@ public class Character : MonoBehaviour
         ClearSlots();
         successes = 0;
         MainSelector.instance.HideSelectedCharacterFeedback();
+        MainSelector.instance.isActionStarted = false;
         TurnBar.instance.NextCharaTurn();
 
     }
 
     // Donne la bonne action au chara
     // Si l'index = 0, tous les bools sont false et le personnage sélectionné Clear ses slots
-    public void ChangeCharaAction(int boolIndex)
+    public void ChangeCharaAction(Action action)
     {
-        switch (boolIndex)
+        if (aw != null)
+            Destroy(aw.gameObject);
+
+        currentAction = action;
+
+        if(currentAction == Action.Idle)
         {
-            case 0:
-                currentAction = "Idle";
-                ClearSlots();
-                break;
-            case 1:
-                currentAction = "Move";
-                break;
-            case 2:
-                currentAction = "Melee";
-                break;
-            case 3:
-                currentAction = "Distance";
-                break;
-            default:
-                Debug.LogError("Cet index n'existe pas !!! (" + boolIndex + ")");
-                break;
+            ClearSlots();
         }
 
         ActionBar.instance.UpdateEnergy(this);
     }
     
-
-
 
 
 
@@ -266,7 +323,7 @@ public class Character : MonoBehaviour
     // Reçoit les dommages et retourne TRUE si le personnage est mort
     public bool ReciveDamages(int damages)
     {
-        int totalDamages = damages - armor - currentSlot.coverValue;
+        int totalDamages = damages - armor;
         if (totalDamages < 0)
             totalDamages = 0;
 
@@ -280,7 +337,7 @@ public class Character : MonoBehaviour
             ///////
         }
         currentLife -= totalDamages;
-        ActionBar.instance.UpdateStage(this);
+        ActionBar.instance.UpdateHealth(this);
         return false;
     }
 
@@ -295,10 +352,10 @@ public class Character : MonoBehaviour
         GetComponent<CapsuleCollider>().direction = 2;
     }
 
-    // Roule les dés et ramène le jeu à la normale
-    public void RollDices(int engagedDices)
+    // Convertit les PE en réussites
+    public void RollSuccesses(int engagedDices)
     {
-        int pct = percentByLife[currentLife];
+        int pct = SkillsValueDealer(); //percentByLife[currentLife];
         int result;
         for (int i = 0; i < engagedDices; i++)
         {
@@ -324,14 +381,36 @@ public class Character : MonoBehaviour
 
         currentEnergy -= engagedDices;
         ShowFeedbackAction(0, transform.position, successes);
-        if (currentAction == "Melee")
+        if (currentAction == Action.Melee)
         {
             EndAttackMelee1();
         }
-        else if (currentAction == "Distance")
+        else if (currentAction == Action.Distance)
         {
-            EndAttackDistance(successes);
+            EndAttackDistance();
         }
+        else if (currentAction == Action.Run)
+        {
+            //print("dices rolled");
+            ApplyRun();
+        }
+        else
+        {
+            print("current action changed : " + currentAction);
+        }
+    }
+
+    // Retourne le % lié à la bonne compétence
+    int SkillsValueDealer()
+    {
+        if (currentAction == Action.Melee)
+            return skillMelee;
+        else if (currentAction == Action.Distance)
+            return skillDistance;
+        else
+            Debug.LogError("On fait appel à cette fonction sans compétence adéquate :" + currentAction);
+
+        return 0;
     }
 
     // Met tous les bools de l'animator à false (remet le personnage en iddle)
@@ -415,9 +494,9 @@ public class Character : MonoBehaviour
     // - de dommages > 1
     void ShowFeedbackAction(int typeOfFb, Vector3 pozWorldSpace, int value)
     {
-        Vector3 poz = Camera.main.WorldToScreenPoint(pozWorldSpace);
-        poz = new Vector3(poz.x, poz.y + 75, poz.z);
-        GameObject fb = Instantiate(Dealer.instance.feedbackAction, poz, Quaternion.identity, Dealer.instance.mainCanvas);
+        Vector3 poz = pozWorldSpace;
+        poz = new Vector3(poz.x, poz.y + 3, poz.z);
+        GameObject fb = Instantiate(Dealer.instance.feedbackAction, poz, Quaternion.identity, Dealer.instance.feedbackCanvas);
         fb.GetComponentInChildren<Text>().text = value.ToString();
         Image img = fb.GetComponentInChildren<Image>();
 

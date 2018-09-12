@@ -17,6 +17,7 @@ public class Dealer : MonoBehaviour
     public Color forbiddenSlot;
     public Color attackableSlot;
     public Color greyedStar;
+    public Color neutralStar;
 
     [Header("Tooltip text")]
     public Text tooltipText;
@@ -24,17 +25,23 @@ public class Dealer : MonoBehaviour
     public float tooltipHorizontalOffset;
     public float tooltipHVerticalOffset;
 
-
-    [Header("Various objects")]
-    public Transform mainCanvas;
-    public GameObject attackWindow;
-    public GameObject charaTurn;
-    public GameObject positionTakingWindow;
-    public GameObject energyPref;
+    [Header("Sprites")]
     public Sprite spriteVoidState;
     public Sprite spriteCurrentState;
     public Sprite fullEnergySprite;
     public Sprite emptyEnergySprite;
+    [Space]
+    public Sprite symbolRun;
+
+    [Header("Various objects")]
+    public Transform mainCanvas;
+    public Transform feedbackCanvas;
+    public GameObject attackWindow;
+    public GameObject charaTurn;
+    public GameObject positionTakingWindow;
+    public GameObject energyPref;
+    public GameObject counter;
+    public GameObject lifeSlot;
 
     [Header("Listes et Array de trucs")]
     public Color[] teamColors;
@@ -42,11 +49,12 @@ public class Dealer : MonoBehaviour
     [SerializeField] Transform characters;
     public Character[] allCharacters;
 
-    [Header("Feedbacks divers")]
+    [Header("Trucs divers")]
     public Transform selectedCharaFeedback;
     public GameObject feedbackAction;
     public Sprite imageSuccess;
     public Sprite imageDamages;
+    public Camera faceCamera;
 
     void Awake()
     {
