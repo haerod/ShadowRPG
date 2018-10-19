@@ -17,7 +17,8 @@ public class Dealer : MonoBehaviour
     public Color forbiddenSlot;
     public Color attackableSlot;
     public Color greyedStar;
-    public Color neutralStar;
+    public Color activeStar;
+    public Color protectionStar;
 
     [Header("Tooltip text")]
     public Text tooltipText;
@@ -33,15 +34,20 @@ public class Dealer : MonoBehaviour
     [Space]
     public Sprite symbolRun;
 
-    [Header("Various objects")]
-    public Transform mainCanvas;
-    public Transform feedbackCanvas;
-    public GameObject attackWindow;
-    public GameObject charaTurn;
+    [Header("Prefabs")]
+    public GameObject actionWindow;
+    public GameObject feedbackWindow;
     public GameObject positionTakingWindow;
     public GameObject energyPref;
     public GameObject counter;
-    public GameObject lifeSlot;
+    public GameObject healthChunk;
+    public GameObject weaponStageChunck;
+    public GameObject feedbackAction;
+
+    [Header("Player UI Elements")]
+    public Transform mainCanvas;
+    public Transform feedbackCanvas;
+    public GameObject newTurnPanel;
 
     [Header("Listes et Array de trucs")]
     public Color[] teamColors;
@@ -51,7 +57,6 @@ public class Dealer : MonoBehaviour
 
     [Header("Trucs divers")]
     public Transform selectedCharaFeedback;
-    public GameObject feedbackAction;
     public Sprite imageSuccess;
     public Sprite imageDamages;
     public Camera faceCamera;
@@ -110,5 +115,35 @@ public class Dealer : MonoBehaviour
     {
         float result = (currentValue - minValue) / (maxValue - minValue);
         return result;
+    }
+
+    // Créer une barre de vie en segments
+    public void DisplayHealthBar(int currentHealth, int maxHealth, RectTransform healthBarRectTransform, float sizeBetweenTiles, bool isWolrdUI = false)
+    {
+        for (int i = 0; i < currentHealth; i++)
+        {
+            RectTransform instaLife = Instantiate(healthChunk, Vector3.zero, healthBarRectTransform.rotation, healthBarRectTransform).GetComponent<RectTransform>();
+            instaLife.sizeDelta = new Vector2( // Donne la taille des lifeSlots
+                (healthBarRectTransform.rect.width - (maxHealth * sizeBetweenTiles)) / maxHealth,
+                healthBarRectTransform.rect.height - sizeBetweenTiles * 2);
+
+            instaLife.gameObject.name = healthChunk.name + "_" + (i + 1);
+
+            if(isWolrdUI) // Positionne les lifeSlots
+                // WORLD UI
+            {
+                instaLife.localPosition = new Vector3( 
+                    (- healthBarRectTransform.rect.width / 2 + sizeBetweenTiles * i + instaLife.rect.width * i + instaLife.rect.width / 2),
+                    0f,
+                    0f);
+            }
+            else
+                // VIEWPORT UI
+            {
+                instaLife.position = new Vector2( // Positionne les lifeSlots
+                    healthBarRectTransform.position.x - healthBarRectTransform.rect.width / 2 + sizeBetweenTiles * i + instaLife.rect.width * i + instaLife.rect.width / 2,
+                    healthBarRectTransform.position.y);
+            }
+        }
     }
 }

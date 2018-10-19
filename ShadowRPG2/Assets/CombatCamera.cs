@@ -59,7 +59,7 @@ public class CombatCamera : MonoBehaviour
     private MouseOverHidableObject previousObj;
     [HideInInspector] public Vector3 lastPoz;
     [HideInInspector] public Quaternion lastRot;
-    [HideInInspector] public bool isCinematicMode;
+    [HideInInspector] public bool isActionMode;
 
     bool isCenter;
 
@@ -69,11 +69,13 @@ public class CombatCamera : MonoBehaviour
         newX = transform.position.x;
         newY = transform.position.y;
         newZ = transform.position.z;
+        lastPoz = transform.position;
+        lastRot = transform.rotation;
 	}
 	
 	void Update ()
     {
-        if(!isCinematicMode)
+        if(!isActionMode)
             HideForwardBuildings();
 
         if (canMove)
@@ -217,7 +219,7 @@ public class CombatCamera : MonoBehaviour
         float offsetZ = zoomMax + (zoomMin - zoomMax) * pctY; 
             // Calucule l'offset en z en fonction du pourcentage de zoom
 
-        Transform chara = TurnBar.instance.GetCurrentCharacter().transform;
+        Transform chara = TurnBar.instance.currentChara.transform;
         Vector3 poz = new Vector3(
             chara.position.x,
             transform.position.y,
@@ -226,25 +228,27 @@ public class CombatCamera : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, poz, 0.1f);
     }
 
-    // Passe la caméra en cinematic mode
-    public void StartCinematicMode(Transform newTransform)
+    // Passe la caméra en action mode
+    public void StartActionMode(Transform newTransform)
     {
         canMove = false;
         lastPoz = transform.position;
         lastRot = transform.rotation;
         transform.position = newTransform.position;
         transform.rotation = newTransform.rotation;
-        isCinematicMode = true;
+        isActionMode = true;
         Dealer.instance.tooltipUI.gameObject.SetActive(false);
+
     }
 
     // Ramène la caméra en mode normal
-    public void StopCinematicMode()
+    public void StopActionMode()
     {
         transform.position = lastPoz;
         transform.rotation = lastRot;
         canMove = true;
-        isCinematicMode = false;
+        isActionMode = false;
+        TurnBar.instance.DispalyAllWorldUI();
     }
 
     // Mode zoom (commenté)

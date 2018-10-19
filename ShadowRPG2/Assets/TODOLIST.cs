@@ -31,19 +31,31 @@ public class TODOLIST : MonoBehaviour
     public bool HideEndTurnAndReload = false;
     [Tooltip("Les feedbacks de dégâts/réussites doivent être intanciés dans le monde plutôt que sur le canvas UI de manière à rester à leur place")]
     public bool WorldFeedback = false;
+
+    [Space]
+
+    [Tooltip("La vie doit s'afficher et se mettre à jour dans les turn tiles")]
+    public bool UpdateTurnTiles = false;
     [Tooltip("Les turnTiles doivent se déplacer au nouvelles positions en cas de changement de tour")]
     public bool PositionTurnTiles = false;
     [Tooltip("Les turnTiles doivent se déplacer au nouvelles positions si un personnage est tué")]
     public bool PositionTurnTilesDeath = false;
+
+    [Space]
+
     [Tooltip("Les compétences doivent afficher le % correspondant")]
     public bool ActionPct = false;
+    [Tooltip("La valeur de cover (et armor ? à vérifier si ça marche) doit se mettre à jour")]
+    public bool MAJCover = false;
 
     [Header("Features Actions")]
 
-    [Tooltip("ACTION : Le personnage peut courir sur plusieurs slots")]
+    [Tooltip("ACTION : Le personnage peut se déplacer sur plusieurs slots, au coût d'1 PE / slot (le premier étant gratuit)")]
     public bool Course = false;
-    [Tooltip("ACTION : Les personnages peuvent retarder leur initiative")]
-    public bool RetarderIntitative = false;
+
+    [Header ("Polish")]
+    [Tooltip("Ajouter une balle avec une traînée lors du tir")]
+    public bool FeedbackShoot = false;
 
     [Header("Notes et liens")]
 

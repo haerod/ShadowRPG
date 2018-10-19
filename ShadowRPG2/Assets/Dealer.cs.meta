@@ -1,36 +1,39 @@
 fileFormatVersion: 2
 guid: b9e75e093838e8a4d93f67bce18389a6
-timeCreated: 1532661006
+timeCreated: 1537487692
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
   - connectedSlotsLR: {instanceID: 0}
-  - actionBarAnim: {instanceID: 0}
-  - panelStats: {instanceID: 0}
-  - panelActions: {instanceID: 0}
-  - buttonReloadEnergy: {instanceID: 0}
-  - charaName: {instanceID: 0}
-  - stageDesription: {instanceID: 0}
-  - stageDescriptionTextual: {instanceID: 0}
+  - tooltipText: {instanceID: 0}
+  - tooltipUI: {instanceID: 0}
   - spriteVoidState: {instanceID: 0}
   - spriteCurrentState: {instanceID: 0}
-  - armorValue: {instanceID: 0}
-  - coverValue: {instanceID: 0}
-  - tooltipText: {instanceID: 0}
-  - energyPref: {instanceID: 0}
-  - energyBar: {instanceID: 0}
-  - turnBar: {instanceID: 0}
-  - charaTurn: {fileID: 1884726873616320, guid: d24e5e85ce64a9f459753979d0b9717b,
-      type: 2}
+  - fullEnergySprite: {instanceID: 0}
+  - emptyEnergySprite: {instanceID: 0}
+  - symbolRun: {instanceID: 0}
   - mainCanvas: {instanceID: 0}
-  - attackWindow: {instanceID: 0}
-  - positionTakingWindow: {instanceID: 0}
+  - feedbackCanvas: {instanceID: 0}
+  - actionWindow: {fileID: 1495101202226596, guid: ccbe4edca1d56fc44b903576d45acc04,
+      type: 2}
+  - feedbackWindow: {instanceID: 0}
+  - positionTakingWindow: {fileID: 1932180692782378, guid: 9397df2e705cdd343afb9018dbebc97b,
+      type: 2}
+  - energyPref: {fileID: 1947974383139558, guid: dc45313882d443043bb68885c8629dae,
+      type: 2}
+  - counter: {instanceID: 0}
+  - healthChunk: {fileID: 1083933785551054, guid: f0c205ac57692f84c9dacac430872ee3,
+      type: 2}
+  - weaponStageChunck: {fileID: 1365429586884780, guid: 23b2dab951bd87b4aaf4a2aec797e079,
+      type: 2}
+  - characters: {instanceID: 0}
   - selectedCharaFeedback: {instanceID: 0}
   - feedbackAction: {instanceID: 0}
   - imageSuccess: {instanceID: 0}
   - imageDamages: {instanceID: 0}
+  - faceCamera: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

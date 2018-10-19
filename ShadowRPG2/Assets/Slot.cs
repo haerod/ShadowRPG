@@ -14,7 +14,7 @@ public class Slot : MonoBehaviour
     List<Slot> dustbin = new List<Slot>(); // Pour ShowPossibilities()
 
     SpriteRenderer sr;
-    Animator anim;
+    //Animator anim;
 
     void Start ()
     {
@@ -22,7 +22,7 @@ public class Slot : MonoBehaviour
         sr.color = Dealer.instance.neutralSlot;
         GenerateConnexions();
         GetComponent<TooltipText>().textToDisplay = "<b>Couverture</b> : " + coverValue + "\n\n" + "La couverture d'une position réduit les chances d'être touché à distance.";
-        anim = GetComponentInChildren<Animator>();
+        //anim = GetComponentInChildren<Animator>();
     }
 
     // Crée des objets vides avec des Line renders pour créer des connexions
@@ -89,18 +89,17 @@ public class Slot : MonoBehaviour
 
     // Change les materials des slots où la course est possible, en fonction du nombre de PE disponibles 
     // FONCTIONNEMENT : La fonction a deux listes de Slot : tockeckList qui contient tous les slots où vérifier les slots connectés pour s'étendre, et la stockList, qui contient les futurs slots à checker (ceux qui ont été nouvellement ajoutés).
-    public void ShowRunPossibilities()
+    public List<Slot> GetMovePossibilities()
     {
         List<Slot> tocheckList = new List<Slot>();
         List<Slot> stockList = new List<Slot>();
         Slot curSlot;
+        List<Slot> movableSlotList = new List<Slot>();
 
         tocheckList.Add(this);
 
         for(int i = 0; i < currentChara.currentEnergy; i++ ) // Pour chaque PE du chara
         {
-
-
             if (i != 0) // Attibue tous les éléments de la stocklist à la tocheckList
             {
                 tocheckList.Clear();
@@ -124,16 +123,94 @@ public class Slot : MonoBehaviour
                         {
                             stockList.Add(curSlot);
                             currentChara.allowedSlots.Add(curSlot);
-                            curSlot.sr.color = Dealer.instance.freeSlot;
+                            movableSlotList.Add(curSlot);
+                            //curSlot.sr.color = Dealer.instance.freeSlot;
                         }
                     }
                     else
                     {
-                        curSlot.sr.color = Dealer.instance.forbiddenSlot;
+                        //curSlot.sr.color = Dealer.instance.forbiddenSlot;
                     }
                 }
             }
         }
+
+        return movableSlotList;
+    }
+
+    // Retourne le chemin de slots le plus court sous la forme d'une liste de Slots
+    // Les autres personnages sont considérés comme des éléments bloquants
+    public List<Slot> ReturnPathfinding(Slot slotToGo)
+    {
+        List<List<Slot>> allPathes = new List<List<Slot>>();
+        List<List<Slot>> stockList = new List<List<Slot>>();
+        List<Slot> verifiedSlots = new List<Slot>();
+
+        allPathes.Add(new List<Slot> { this });
+
+        for (int i = 0; i < 10; i++) // WHILE (avec un max de 20 boucles)
+        {
+            for (int j = 0; j< allPathes.Count; j++) // Pour chaque path à vérifier
+            {
+                Slot slotToCheck = allPathes[j][allPathes[j].Count - 1]; // Récupère le dernier slot de la liste (celui dot on va vérifier les connexions)
+
+                for (int k = 0; k < slotToCheck.connectedSlots.Length; k++) // Pour chaque connected slot
+                {
+                    Slot currentConnectedSlot = slotToCheck.connectedSlots[k];
+
+                    if (currentConnectedSlot.currentChara == null) // S'il n'y a pas de personnage sur le slot
+                    {
+                        // SI c'est le bon slot 
+                        if (currentConnectedSlot == slotToGo) // SLOT TROUVE
+                        {
+                            List<Slot> endList = new List<Slot>();
+                            for (int n = 0; n < allPathes[j].Count; n++)
+                            {
+                                endList.Add(allPathes[j][n]);
+                            }
+                            endList.Add(currentConnectedSlot);
+                            endList.Remove(this);
+
+                            for (int z = 0; z < endList.Count; z++)
+                            {
+                                endList[z].GetComponentInChildren<SpriteRenderer>().color = Dealer.instance.freeSlot;
+                            }
+
+                            return endList;
+                        }
+                        // SINON
+                        else
+                        {
+                            if (verifiedSlots.Contains(currentConnectedSlot)) // Si le slot a déjà été vérifié
+                            {
+                                // Ne rien faire, ça sera cleané après
+                            }
+                            else // Sinon l'ajouter à une List qui sera ajoutée à la stockList
+                            {
+                                List<Slot> listToAdd = new List<Slot>();
+                                for (int m = 0; m < allPathes[j].Count; m++)
+                                {
+                                    listToAdd.Add(allPathes[j][m]);
+                                }
+                                listToAdd.Add(currentConnectedSlot);
+                                stockList.Add(listToAdd);
+                            }
+                        }
+                    }
+                }
+            }
+
+            allPathes.Clear(); // Vider allPathes
+
+            for (int l = 0; l < stockList.Count; l++) // Ajouter tous les path de la stocklist dans allPathes
+            {
+                allPathes.Add(stockList[l]);
+            }
+
+            stockList.Clear(); // Vider la stocklist
+        }
+
+        return null;
     }
 
     // Change le material des slots où l'attaque en melée est possible
@@ -248,18 +325,6 @@ public class Slot : MonoBehaviour
             Dealer.instance.allSlotArray[i].sr.color = Dealer.instance.neutralSlot;
         }
     }
-
-    void OnMouseOver()
-    {
-        anim.SetBool("Loop", true);
-    }
-
-    void OnMouseExit()
-    {
-        anim.SetBool("Loop", false);
-    }
-
-
 
     // Elimine les slots à éliminer dans la List slots
     void CleanDustbin()

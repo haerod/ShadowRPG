@@ -9,7 +9,7 @@ public class MouseOverHidableObject : MonoBehaviour
 
     public void OnMouseOver()
     {
-        if(!Camera.main.GetComponent<CombatCamera>().isCinematicMode)
+        if(!Camera.main.GetComponent<CombatCamera>().isActionMode)
             isOver = true;
         else
             isOver = false;

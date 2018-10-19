@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 224431046460986950}
   - component: {fileID: 222700114258403458}
   - component: {fileID: 95281779587555798}
-  - component: {fileID: 114330753779957686}
+  - component: {fileID: 114407838837157218}
   m_Layer: 5
   m_Name: FeedabackAction
   m_TagString: Untagged
@@ -80,7 +80,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114330753779957686
+--- !u!114 &114407838837157218
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -88,7 +88,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948481794965504}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b30b2c822203fe4190c46556e43080d, type: 3}
+  m_Script: {fileID: 11500000, guid: 32911e3c55e9c554d917da347409420c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114842497712603434

@@ -70,6 +70,7 @@ public class MainSelector : MonoBehaviour
                 // Sélectionne un personnage si aucune action n'est en cours
                 if (TurnBar.instance.currentChara.currentAction == Character.Action.Idle)
                 {
+
                     if (hit.transform.GetComponent<Slot>())
                     {
                         Slot newSlot = hit.transform.GetComponent<Slot>();
@@ -89,11 +90,14 @@ public class MainSelector : MonoBehaviour
         //Clique sur un perso
         if (castHit.transform.tag == "Character")
         {
-            Character perso = castHit.transform.GetComponent<Character>();
+            Character chara = castHit.transform.GetComponent<Character>();
             // PJ et en vie
-            if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+            if ((chara.team == 0 || chara.team == 1 || chara.team == 2) && !chara.isDead)
             {
-                ActionBar.instance.DisplayActionBar(perso, perso == TurnBar.instance.currentChara);
+                bool isPlayable = (chara.team == TurnBar.instance.currentTeam && !chara.isActionEnded); // isPlayable = true IF est de la bonne team et en vie, ELSE = false
+                ActionBar.instance.UpdateActionBar(chara, isPlayable);
+                if (isPlayable)
+                    TurnBar.instance.currentChara = chara;
                 return;
             }
         }
@@ -102,11 +106,14 @@ public class MainSelector : MonoBehaviour
         {
             if (castHit.transform.GetComponent<Slot>().currentChara != null)
             {
-                Character perso = castHit.transform.GetComponent<Slot>().currentChara;
+                Character chara = castHit.transform.GetComponent<Slot>().currentChara;
                 // PJ et en vie
-                if ((perso.team == 0 || perso.team == 1 || perso.team == 2) && !perso.isDead)
+                if ((chara.team == 0 || chara.team == 1 || chara.team == 2) && !chara.isDead)
                 {
-                    ActionBar.instance.DisplayActionBar(perso, perso == TurnBar.instance.currentChara);
+                    bool isPlayable = (chara.team == TurnBar.instance.currentTeam && !chara.isActionEnded); // isPlayable = true IF est de la bonne team et en vie, ELSE = false
+                    ActionBar.instance.UpdateActionBar(chara, isPlayable);
+                    if (isPlayable)
+                        TurnBar.instance.currentChara = chara;
                     return;
                 }
             }
@@ -141,7 +148,7 @@ public class MainSelector : MonoBehaviour
             if (TurnBar.instance.currentChara.currentAction == Character.Action.Move)
             {
                 TurnBar.instance.currentChara.StartMoveCharacter(tempSlot);
-                ActionBar.instance.HideActionBar();
+                //ActionBar.instance.HideActionBar();
                 DisplaySelectedPlayerFeedback(TurnBar.instance.currentChara);
                 ActionBar.instance.UpdateCoverValue(TurnBar.instance.currentChara);
                 canClick = false;
@@ -152,8 +159,8 @@ public class MainSelector : MonoBehaviour
             // Lance MELEE
             if (TurnBar.instance.currentChara.currentAction == Character.Action.Melee)
             {
-                TurnBar.instance.currentChara.StartAttackMelee(tempSlot.currentChara);
-                ActionBar.instance.HideActionBar();
+                TurnBar.instance.currentChara.StartMoveToAttackMelee(tempSlot.currentChara);
+                //ActionBar.instance.HideActionBar();
                 isActionStarted = true;
                 return;
                 //////////////
@@ -163,7 +170,7 @@ public class MainSelector : MonoBehaviour
             if (TurnBar.instance.currentChara.currentAction == Character.Action.Distance)
             {
                 TurnBar.instance.currentChara.StartAttackDistance(tempSlot.currentChara);
-                ActionBar.instance.HideActionBar();
+                //ActionBar.instance.HideActionBar();
                 isActionStarted = true;
                 return;
                 //////////////

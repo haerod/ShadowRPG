@@ -5,17 +5,21 @@ using UnityEngine.UI;
 
 public class ActionBar : MonoBehaviour
 {
+    #region VARIABLES
+
     [SerializeField] GameObject panelActions; 
     [SerializeField] GameObject panelStats;
     [SerializeField] GameObject panelPassAndReload;
+    [SerializeField] GameObject panelWeapon;
+    [SerializeField] GameObject panelDefenses;
 
     [Space]
 
     [SerializeField] Text charaNameTxt;
     [SerializeField] Text armorValueTxt; 
     [SerializeField] Text coverValueTxt; 
-    [SerializeField] Text stageDesriptionTxt;
     [SerializeField] Text healthText;
+    [SerializeField] Image weaponImage;
     public RectTransform energyBarRt;
     [SerializeField] RectTransform healthBarRt;
 
@@ -36,6 +40,7 @@ public class ActionBar : MonoBehaviour
 
     [HideInInspector] public static ActionBar instance;
 
+    #endregion
 
 
 
@@ -52,31 +57,37 @@ public class ActionBar : MonoBehaviour
 
 
 
-    //Affiche la barre d'actions
-    public void DisplayActionBar(Character selectedCharacter, bool displayActions)
+    //Met à jour la barre d'actions
+    public void UpdateActionBar(Character chara, bool displayActions)
     {
-        panelActions.SetActive(false);
-        panelStats.SetActive(false);
-
         panelStats.SetActive(true);
+        panelDefenses.SetActive(true);
+
         if (displayActions) // Si demandé, affiche les actions et les actions sous la Chara Tile principale
         {
             panelActions.SetActive(true);
+            panelWeapon.SetActive(true);
             panelPassAndReload.SetActive(true);
+            for (int i = 0; i < buttonsAction.Length; i++)
+            {
+                buttonsAction[i].interactable = !chara.isActionEnded;
+            }
         }
         else
         {
-            HideUndertileActions();
+            panelActions.SetActive(false);
+            panelWeapon.SetActive(false);
+            panelPassAndReload.SetActive(false);
         }
 
-        charaNameTxt.text = selectedCharacter.charaName;
-        UpdateArmorValue(selectedCharacter);
-        UpdateCoverValue(selectedCharacter);
-        GenerateEnergy(selectedCharacter);
-        DestroyHealth(); // Enlève les symboles life
-        UpdateHealth(selectedCharacter);
-        UpdateSkillsValue(selectedCharacter); // Met à jour les % skill
-        MainSelector.instance.DisplaySelectedPlayerFeedback(selectedCharacter);
+        charaNameTxt.text = chara.charaName;
+        UpdateArmorValue(chara);
+        UpdateCoverValue(chara);
+        UpdateEnergy(chara);
+        UpdateHealth(chara);
+        UpdateSkillsValue(chara); // Met à jour les % skill
+        UpdateWeaponImage(chara);
+        MainSelector.instance.DisplaySelectedPlayerFeedback(chara);
     }
 
     //Masque la barre d'actions
@@ -85,7 +96,6 @@ public class ActionBar : MonoBehaviour
         panelActions.SetActive(false);
         panelStats.SetActive(false);
         Dealer.instance.selectedCharaFeedback.gameObject.SetActive(false);
-        DestroyEnergy();
     }
 
     // Met à jour le text de % de compétence d'un chara
@@ -122,59 +132,51 @@ public class ActionBar : MonoBehaviour
     {
         coverValueTxt.text = selectedCharacter.currentSlot.coverValue.ToString();
     }
-    
-    // Masque les actions situées sous la Chara Tile (terminer le tour, recharger énergie)
-    public void HideUndertileActions()
+
+    // Lance l'UI pour l'Action mode
+    public void UiActionMode()
     {
-        panelPassAndReload.SetActive(false);
+        panelActions.SetActive(false);
+        panelStats.SetActive(false);
     }
 
-    // SANTE
-    // Met à jour l'etat du personnage et bloque l'action reload
+    // Lance l'UI pour le mode Sélection (mode de base)
+    public void UiSelectionMode()
+    {
+        panelActions.SetActive(true);
+        panelStats.SetActive(true);
+    }
+
+    // Met à jour la santé du personnage et bloque l'action reload
     public void UpdateHealth(Character chara)
     {
-        DestroyHealth();
+        for (int i = 0; i < healthBarRt.transform.childCount; i++)
+        {
+            Destroy(healthBarRt.transform.GetChild(i).gameObject);
+        }
 
         if (chara.currentLife > 1 && chara.currentEnergy != chara.maxEnergy)
             buttonReloadEnergy.interactable = true;
         else
             buttonReloadEnergy.interactable = false;
 
-        int sizeBetweenTiles = 2;
-
-        for (int i = 0; i < chara.currentLife; i++)
-        {
-            RectTransform instaLife = Instantiate(Dealer.instance.lifeSlot, Vector3.zero, Quaternion.identity, healthBarRt).GetComponent<RectTransform>();
-            instaLife.sizeDelta = new Vector2( // Donne la taille des lifeSlots
-                (healthBarRt.rect.width - (chara.maxLife * sizeBetweenTiles)) / chara.maxLife,
-                healthBarRt.rect.height - sizeBetweenTiles * 2);
-
-            instaLife.gameObject.name = Dealer.instance.lifeSlot.name + "_" + (i+1);
-
-            instaLife.position = new Vector2( // Positionne les lifeSlots
-                healthBarRt.position.x - healthBarRt.rect.width / 2 + sizeBetweenTiles * i + instaLife.rect.width * i + instaLife.rect.width / 2,
-                healthBarRt.position.y);
-        }
+        Dealer.instance.DisplayHealthBar(chara.currentLife, chara.maxLife, healthBarRt, 2);
 
         healthText.text = chara.currentLife.ToString();
+        chara.UpdateHealth();
     }
 
-    //Détruit les symboles énergie dans l'action bar
-    public void DestroyHealth()
+    // Met à jour les PE du personnage
+    public void UpdateEnergy(Character chara)
     {
-        for (int i = 0; i < healthBarRt.transform.childCount; i++)
+        // Destroy energy
+        for (int i = 0; i < energyImagesList.Count; i++)
         {
-            Destroy(healthBarRt.transform.GetChild(i).gameObject);
+            Destroy(energyImagesList[i].gameObject);
         }
-    }
-    //=========
+        energyImagesList.Clear();
 
-    // ENERGY
-    //Crée les PE dans l'action bar
-    void GenerateEnergy(Character chara)
-    {
-        DestroyEnergy();
-
+        // Generate energy
         int maxAngle = 180;
         int radius = 60;
         int currentAngle;
@@ -185,45 +187,52 @@ public class ActionBar : MonoBehaviour
             currentAngle = currentAngle * (i + 1); // Calcule l'angle lié au PE
 
             Vector2 pozEnergy = new Vector2( // Calcule les coordonnées du PE;
-                radius * Mathf.Cos((currentAngle+90) * Mathf.Deg2Rad),
-                radius * Mathf.Sin((currentAngle+90) * Mathf.Deg2Rad));
+                radius * Mathf.Cos((currentAngle + 90) * Mathf.Deg2Rad),
+                radius * Mathf.Sin((currentAngle + 90) * Mathf.Deg2Rad));
 
             RectTransform pe = Instantiate(Dealer.instance.energyPref, Vector3.zero, Quaternion.identity, energyBarRt).GetComponent<RectTransform>(); // Crée le PE
             pe.transform.localPosition = pozEnergy; // Assigne la position
             energyImagesList.Add(pe.GetComponent<Image>()); // Ajoute le PE à la liste
+
+            chara.UpdateEnergy();
         }
 
-        UpdateEnergy(chara);
-    }
-
-    // Met à jour les symboles énergie (plein / vide)
-    public void UpdateEnergy(Character selectedCharacter)
-    {
+        // Update symbols
         for (int i = 0; i < energyImagesList.Count; i++)
-        { 
-            if(i <= selectedCharacter.currentEnergy - 1)
+        {
+            if (chara.isActionEnded)
             {
-                energyImagesList[i].color = Dealer.instance.neutralStar;
+                if (i <= chara.currentEnergy - 1)
+                {
+                    energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.protectionStar;
+                    // juste mettre list[i] pour les étoiles dans l'autre sens
+                }
+                else
+                {
+                    energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.greyedStar;
+                }
             }
             else
             {
-                energyImagesList[i].color = Dealer.instance.greyedStar;
+                if (i <= chara.currentEnergy - 1)
+                {
+                    energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.activeStar;
+                    // juste mettre list[i] pour les étoiles dans l'autre sens
+                }
+                else
+                {
+                    energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.greyedStar;
+                }
             }
         }
     }
-
-    // Cache les symboles Energie dans l'action bar
-    public void DestroyEnergy()
+    
+    // Met à jour l'image d'arme du personnage
+    void UpdateWeaponImage(Character chara)
     {
-        for (int i = 0; i < energyImagesList.Count; i++)
-        {
-            Destroy(energyImagesList[i].gameObject);
-        }
-        energyImagesList.Clear();
+        weaponImage.sprite = chara.currentWeapon.illustration;
     }
-    //=========
-
-
+    
     #region ACTIONS
 
     // Si le joueur clique sur le bouton MOUVEMENT
@@ -257,6 +266,8 @@ public class ActionBar : MonoBehaviour
         if (TurnBar.instance.currentChara.currentLife > 1)
         {
             TurnBar.instance.currentChara.ReloadEnergy();
+            UpdateHealth(TurnBar.instance.currentChara);
+            UpdateEnergy(TurnBar.instance.currentChara);
         }
     }
 
@@ -265,14 +276,6 @@ public class ActionBar : MonoBehaviour
     {
         TurnBar.instance.currentChara.ClearSlots();
         TurnBar.instance.currentChara.PassTurn();
-    }
-
-    // Si le joueur clique sur le bouton RUN
-    public void ClickOnRun()
-    {
-        TurnBar.instance.currentChara.ClearSlots();
-        TurnBar.instance.currentChara.currentSlot.ShowRunPossibilities();
-        MainSelector.instance.isActionStarted = true;
     }
 
     #endregion

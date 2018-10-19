@@ -47,7 +47,7 @@ public class TooltipText : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             Dealer.instance.tooltipText.preferredHeight + 20);
         tooltip.position = new Vector2(xTooltip, yTooltip);
         tooltip.gameObject.SetActive(true);
-        //Instantiate(Dealer.instance.energyPref, tooltip.position, tooltip.rotation, Dealer.instance.mainCanvas);
+        Dealer.instance.tooltipText.transform.parent.SetAsLastSibling();
     }
 
     public void OnPointerExit(PointerEventData eventData)

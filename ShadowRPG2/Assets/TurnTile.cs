@@ -55,12 +55,12 @@ public class TurnTile : MonoBehaviour
 
         for (int i = 0; i < chara.currentLife; i++)
         {
-            RectTransform instaLife = Instantiate(Dealer.instance.lifeSlot, Vector3.zero, Quaternion.identity, healthBarRt).GetComponent<RectTransform>();
+            RectTransform instaLife = Instantiate(Dealer.instance.healthChunk, Vector3.zero, Quaternion.identity, healthBarRt).GetComponent<RectTransform>();
             instaLife.sizeDelta = new Vector2( // Donne la taille des lifeSlots
                 (healthBarRt.rect.width - (chara.maxLife * sizeBetweenTiles)) / chara.maxLife,
                 healthBarRt.rect.height - sizeBetweenTiles * 2);
 
-            instaLife.gameObject.name = Dealer.instance.lifeSlot.name + "_" + (i + 1);
+            instaLife.gameObject.name = Dealer.instance.healthChunk.name + "_" + (i + 1);
 
             instaLife.position = new Vector2( // Positionne les lifeSlots
                 healthBarRt.position.x - healthBarRt.rect.width / 2 + sizeBetweenTiles * i + instaLife.rect.width * i + instaLife.rect.width / 2,
@@ -113,11 +113,11 @@ public class TurnTile : MonoBehaviour
         {
             if (i <= chara.currentEnergy - 1)
             {
-                energyImagesList[i].color = Dealer.instance.neutralStar;
+                energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.activeStar;
             }
             else
             {
-                energyImagesList[i].color = Dealer.instance.greyedStar;
+                energyImagesList[energyImagesList.Count - i - 1].color = Dealer.instance.greyedStar;
             }
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PositionTakingWindow : MonoBehaviour
 {
-    public Character linkedChara;
+    public Character chara;
 
     void Start()
     {
@@ -14,21 +14,24 @@ public class PositionTakingWindow : MonoBehaviour
     IEnumerator StopPunchAction()
     {
         yield return new WaitForEndOfFrame();
-        linkedChara.SetAllBoolAnimFalse();
+        chara.SetAllBoolAnimFalse();
     }
 
     public void ClickOnTakePosition()
     {
-        linkedChara.EndPositionTaking();
+        chara.EndPositionTaking();
         MainSelector.instance.canClick = true;
-        Destroy(this.gameObject);
+        Destroy(chara.fw.gameObject);
+        Destroy(gameObject);
     }
 
     public void ClickOnStayBack()
     {
+        Camera.main.GetComponent<CombatCamera>().StopActionMode();
         MainSelector.instance.canClick = true;
-        linkedChara.SetOneBoolAnimTrue("Run");
-        linkedChara.isMovingToSlot = 3;
-        Destroy(this.gameObject);
+        chara.SetOneBoolAnimTrue("Run");
+        chara.isMovingToSlot = 3;
+        Destroy(chara.fw.gameObject);
+        Destroy(gameObject);
     }
 }

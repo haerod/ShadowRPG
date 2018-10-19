@@ -220,19 +220,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\ActionBar.cs" />
-    <Compile Include="Assets\ActionWindow.cs" />
+    <Compile Include="Assets\Autodestroy.cs" />
     <Compile Include="Assets\Character.cs" />
-    <Compile Include="Assets\CharaLinkAnim.cs" />
     <Compile Include="Assets\CircleLineRenderer.cs" />
     <Compile Include="Assets\CombatCamera.cs" />
     <Compile Include="Assets\Counter.cs" />
     <Compile Include="Assets\Dealer.cs" />
     <Compile Include="Assets\FadeOutElement.cs" />
+    <Compile Include="Assets\FeedbackWindow.cs" />
     <Compile Include="Assets\FixedEnergyChara.cs" />
     <Compile Include="Assets\MainSelector.cs" />
     <Compile Include="Assets\Menu.cs" />
     <Compile Include="Assets\MouseOverHidableObject.cs" />
+    <Compile Include="Assets\NewActionWindow.cs" />
+    <Compile Include="Assets\Old\ActionWindow.cs" />
+    <Compile Include="Assets\Old\UiFrontCamera.cs" />
     <Compile Include="Assets\PositionTakingWindow.cs" />
+    <Compile Include="Assets\SelectableEnergyPoint.cs" />
     <Compile Include="Assets\Simple UI\Samples\IconPreview.cs" />
     <Compile Include="Assets\Slot.cs" />
     <Compile Include="Assets\TODOLIST.cs" />
@@ -240,7 +244,9 @@
     <Compile Include="Assets\TooltipTextLayered.cs" />
     <Compile Include="Assets\TurnBar.cs" />
     <Compile Include="Assets\TurnTile.cs" />
-    <Compile Include="Assets\UiFrontCamera.cs" />
+    <Compile Include="Assets\UiFrontMainCam.cs" />
+    <Compile Include="Assets\Weapon.cs" />
+    <Compile Include="Assets\WeaponDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Graphs\Polygon City Free Pack\Materials\Double Sided Standard Diffuse Bump.shader" />

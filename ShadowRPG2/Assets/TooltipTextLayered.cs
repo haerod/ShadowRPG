@@ -21,7 +21,7 @@ public class TooltipTextLayered : MonoBehaviour
 
     void Update()
     {
-        if (!cam.isCinematicMode)
+        if (!cam.isActionMode)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
